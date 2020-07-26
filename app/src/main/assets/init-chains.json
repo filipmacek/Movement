@@ -1,0 +1,60 @@
+[{
+  "name": "Ropsten Testnet",
+  "chainId": 3,
+  "shortName": "ropsten",
+  "networkId": 3,
+  "nativeCurrency": {
+    "name": "Ether",
+    "symbol": "ETH",
+    "decimals": 18
+  },
+  "rpc": "https://ropsten.infura.io/v3/42f42a255e264be7a6bc8373c4308e96"
+},{
+  "name": "Rinkeby Testnet",
+  "chainId": 4,
+  "shortName": "rinkeby",
+  "networkId": 4,
+  "nativeCurrency": {
+    "name": "Ether",
+    "symbol": "ETH",
+    "decimals": 18
+  },
+  "rpc": "https://rinkeby.infura.io/v3/42f42a255e264be7a6bc8373c4308e96"
+},
+  {
+    "name": "Ethereum Mainnet",
+    "chainId": 1,
+    "shortName": "eth",
+    "networkId": 1,
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "rpc": "https://mainnet.infura.io/v3/42f42a255e264be7a6bc8373c4308e96"
+  },
+  {
+    "name": "TomoChain Mainnet",
+    "chainId": 88,
+    "shortName": "tomo",
+    "networkId": 88,
+    "nativeCurrency": {
+      "name": "Tomo",
+      "symbol": "TOMO",
+      "decimals": 18
+    },
+    "rpc": "https://rpc.tomochain.com"
+  },
+  {
+    "name": "TomoChain Testnet",
+    "chainId": 89,
+    "shortName": "tomotest",
+    "networkId": 89,
+    "nativeCurrency": {
+      "name": "Tomo",
+      "symbol": "TOMO",
+      "decimals": 18
+    },
+    "rpc": "https://rpc.testnet.tomochain.com"
+  }
+]

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_movement"
+    app:startDestination="@+id/login_fragment">
+
+    <fragment
+        android:id="@+id/login_fragment"
+        android:name="com.filipmacek.movement.LoginFragment"
+        android:label="fragment_login_screen"
+        tools:layout="@layout/login_fragment">
+        <action
+            android:id="@+id/action_login_fragment_to_dashboard"
+            app:destination="@id/dashboard"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_login_fragment_to_user_list"
+            app:destination="@id/user_list"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dashboard"
+        android:name="com.filipmacek.movement.DashboardFragment"
+        android:label="fragment_dashboard_screen"
+        tools:layout="@layout/dashboard_layout">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/user_list"
+        android:name="com.filipmacek.movement.UserListFragment"
+        android:label="user_list_screen"
+        tools:layout="@layout/user_list_fragment">
+
+    </fragment>
+
+
+
+</navigation>
