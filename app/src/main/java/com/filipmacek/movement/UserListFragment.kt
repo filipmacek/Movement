@@ -4,17 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import com.filipmacek.movement.adapters.UsersAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.filipmacek.movement.adapters.UserListAdapter
+import com.filipmacek.movement.blockchain.SmartContract
+import com.filipmacek.movement.data.users.User
 import com.filipmacek.movement.databinding.UserListFragmentBinding
-import kotlinx.android.synthetic.main.user_list_fragment.*
+import com.filipmacek.movement.viewmodels.UserViewModel
+import org.koin.android.ext.android.inject
+
 
 class UserListFragment :Fragment(){
 
     private lateinit var binding: UserListFragmentBinding
+
+    private val viewModel:UserViewModel by inject()
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +33,14 @@ class UserListFragment :Fragment(){
         binding = UserListFragmentBinding.inflate(inflater,container,false)
 
 
+        viewModel.users.observe(viewLifecycleOwner, Observer { users ->
+
+            val adapter = UserListAdapter(users)
+            binding.userList.adapter = adapter
+            binding.userList.layoutManager = LinearLayoutManager(context)
+        })
+
+
 
 
        binding.listUserToolbar.setNavigationOnClickListener { view->
@@ -31,10 +48,9 @@ class UserListFragment :Fragment(){
        }
         return binding.root
 
-
-
-
-
-
     }
+
+
+
+
 }

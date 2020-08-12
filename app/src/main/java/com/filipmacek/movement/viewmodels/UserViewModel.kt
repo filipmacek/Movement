@@ -1,22 +1,15 @@
 package com.filipmacek.movement.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.content.Context
+import androidx.lifecycle.*
+import com.filipmacek.movement.blockchain.SmartContract
 import com.filipmacek.movement.data.users.User
 import com.filipmacek.movement.data.users.UserRepository
 
-class UserListViewModel(usersRepository: UserRepository):ViewModel(){
-    private val users: MutableLiveData<List<User>> = MutableLiveData().also{
-        loadUsers()
+class UserViewModel(private val userRepository: UserRepository):ViewModel() {
+    val users :LiveData<List<User>> = userRepository.getUsers()
 
-    }
+    fun checkIfValid(username:String):User = userRepository.getUserByUsername(username)
 
-    fun getData():LiveData<List<User>> {
-        return users
-    }
 
-    private fun loadUsers() {nd
-
-    }
 }

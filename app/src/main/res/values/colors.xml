@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#1245AA</color>
+
+    <color name="cardBackground">#F1EAE6</color>
+
+
     <color name="colorLightBlue">#3697EC</color>
     <color name="colorDarkBlue">#33DABE6D</color>
     <color name="white">#ffffff</color>
     <color name="textColorPrimary">#442C2E</color>
+    <color name="blackText">#000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="selected_color">#BECA1B</color>
+    <color name="un_selected_color">#F4EFEF</color>
+
+
+
 
 </resources>
+

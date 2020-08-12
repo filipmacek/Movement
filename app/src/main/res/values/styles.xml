@@ -12,7 +12,7 @@
         <item name="colorPrimary">@color/colorLightBlue</item>
         <item name="colorPrimaryDark">@color/colorDarkBlue</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
+d    </style>
 
     <style name="TextAppearance.Movement.Title" parent="TextAppearance.MaterialComponents.Headline4">
         <item name="textAllCaps">true</item>
@@ -29,6 +29,15 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <style name="Theme.Movement.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
+    <style name="Theme.Movement.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.ActionBar"/>
+
+    <style name="Widget.Movement.MaterialCardView" parent="Widget.MaterialComponents.CardView">
+
+    </style>
+
+    <style name="TextAppearance.Movement.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
+
+    </style>
+
 
 </resources>

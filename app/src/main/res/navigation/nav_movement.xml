@@ -30,7 +30,27 @@
         android:id="@+id/dashboard"
         android:name="com.filipmacek.movement.DashboardFragment"
         android:label="fragment_dashboard_screen"
-        tools:layout="@layout/dashboard_layout">
+        tools:layout="@layout/dashboard_fragment">
+
+        <action
+            android:id="@+id/action_dashboard_to_route_info"
+            app:destination="@id/route_info" />
+        <action
+            android:id="@+id/action_dashboard_to_movement_page"
+            app:destination="@id/movement_page" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/route_info"
+        android:name="com.filipmacek.movement.RouteInfoFragment"
+        tools:layout="@layout/route_info">
+        <argument
+            android:name="startLocation"
+            app:argType="string"
+           />
+        <argument
+            android:name="endLocation"
+            app:argType="string"/>
 
     </fragment>
 
@@ -39,8 +59,20 @@
         android:name="com.filipmacek.movement.UserListFragment"
         android:label="user_list_screen"
         tools:layout="@layout/user_list_fragment">
-
+        <action
+            android:id="@+id/action_user_list_to_dashboard"
+            app:destination="@id/dashboard"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
     </fragment>
+
+    <fragment
+        android:id="@+id/movement_page"
+        android:name="com.filipmacek.movement.MovementFragment"
+        tools:layout="@layout/movement_fragment"/>
 
 
 

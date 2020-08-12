@@ -12,7 +12,7 @@ android {
         dataBinding = true
     }
     defaultConfig {
-        applicationId "com.google.samples.apps.sunflower"
+        applicationId "com.filipmacek.movement"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -40,15 +40,22 @@ android {
         freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
         freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
     }
+    packagingOptions{
+        exclude 'META-INF/core.kotlin_module'
+    }
 }
 
 dependencies {
     implementation 'com.squareup.moshi:moshi:1.9.3'
+    implementation files('web3j')
     kapt "com.android.databinding:compiler:3.1.4"
     kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
 
     kapt "androidx.room:room-compiler:$rootProject.roomVersion"
     kapt "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
+
+    // Androidx
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
     implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
@@ -70,8 +77,14 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpLoggingVersion"
+
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
+
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
@@ -85,6 +98,30 @@ dependencies {
 
     // RxJava
     implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "androidx.room:room-rxjava2:2.2.5"
+
+
+    //Material dialogs
+    implementation 'com.afollestad.material-dialogs:input:3.3.0'
+
+    // web3j
+    // dependencies for contract interaction
+    api 'org.web3j:infura:4.0.0'
+    api 'org.web3j:core:4.5.11'
+
+    // Dexter permissions
+    implementation 'com.karumi:dexter:6.2.1'
+
+    // Google maps
+    implementation 'com.google.maps.android:android-maps-utils:2.0.3'
+
+    // Google play
+    implementation "com.google.android.gms:play-services-maps:17.0.0"
+    implementation "com.google.android.gms:play-services-location:17.0.0"
+
+
+
 
 
 

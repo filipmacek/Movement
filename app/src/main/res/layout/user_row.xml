@@ -21,34 +21,47 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="3dp"
-    app:cardElevation="2dp">
+    app:cardElevation="2dp"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="@color/cardBackground"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/white"
+    style="@style/Widget.Movement.MaterialCardView"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginBottom="8dp">
-            <LinearLayout
-                android:layout_width="match_parent"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/username"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                tools:ignore="MissingConstraints">
-               <TextView
-                   android:id="@+id/username"
-                   android:layout_width="100dp"
-                   android:layout_height="match_parent"
-                   android:layout_weight="1"
-                   android:text="Username"
-                   />
+                android:layout_margin="18dp"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:text="Username"
+                android:textColor="@color/blackText"
+                android:textSize="20sp" />
 
 
-               <TextView
-                   android:id="@+id/address"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_weight="1"
-                   android:text="Address"
-                   />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_margin="16dp"
+                android:layout_weight="1"
+                android:text="Address"
+                android:textColor="@color/blackText" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/connect_button"
@@ -63,4 +76,6 @@
 
 
 </com.google.android.material.card.MaterialCardView>
+
+
 

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MovementDApp</string>
     <string name="guy_icon">Guy</string>
+    <string name="login_button_text">Login</string>
+    <string name="no_location_text">No current location</string>
 
 </resources>

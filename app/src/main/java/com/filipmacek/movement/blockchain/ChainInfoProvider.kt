@@ -1,4 +1,4 @@
-package com.filipmacek.movement.chains
+package com.filipmacek.movement.blockchain
 
 import android.content.res.AssetManager
 import androidx.lifecycle.MutableLiveData
