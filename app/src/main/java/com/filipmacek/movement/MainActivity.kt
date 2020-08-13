@@ -11,6 +11,7 @@ import android.location.Location
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
+import com.filipmacek.movement.data.location.Coordinate
 import com.filipmacek.movement.data.location.LocationRepository
 import com.filipmacek.movement.data.users.User
 import com.filipmacek.movement.services.MovementLocationService
@@ -29,7 +30,8 @@ import java.io.File
 class MainActivity : AppCompatActivity() {
     private val viewModel:MainActivityViewModel by inject()
 
-
+    val x = Coordinate("12:12:04 1.1.2019",45.34232,43.2321,1)
+    val y = Coordinate("12:14:08 1.1.2019",45.34232,43.2321,1)
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                             token: PermissionToken?
                     ) {}
                 }).check()
+
 
     }
 

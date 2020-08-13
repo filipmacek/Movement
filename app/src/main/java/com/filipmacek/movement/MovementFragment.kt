@@ -3,7 +3,9 @@ package com.filipmacek.movement
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.*
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Color.RED
 import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
@@ -23,6 +25,7 @@ import androidx.navigation.fragment.navArgs
 import com.filipmacek.movement.data.location.Coordinate
 import com.filipmacek.movement.data.location.CoordinatesDao
 import com.filipmacek.movement.data.location.LocationRepository
+import com.filipmacek.movement.data.location.Timer
 import com.filipmacek.movement.data.routes.Route
 import com.filipmacek.movement.databinding.MovementFragmentBinding
 import com.filipmacek.movement.services.MovementLocationService
@@ -41,6 +44,7 @@ import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.get
 
 import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.bindScope
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -70,6 +74,8 @@ data class Destination(
 class MovementFragment :Fragment(),OnMapReadyCallback{
 
     private lateinit var route:Route
+
+    private  var timer:Timer = Timer()
 
     private lateinit var startDestination:Destination
     private lateinit var endDestionation:Destination
@@ -125,6 +131,9 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         // Clear database
         viewModel.clearDatabase()
 
+        // Init route in viewModel
+        viewModel.initViewModel(arguments?.getString("routeId").toString())
+
         // Load static data
         route = viewModel.routeById(arguments?.getString("routeId").toString())
         startDestination = getDestinationFromString(route.startLocation)
@@ -151,9 +160,72 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         // Route data
         binding.routeIdInfo.text =makeProperString(route?.routeId)
 
+        // Timer
+        binding.dataTimer.text=timer.toString()
+
+        // Route status
+        binding.dataStatus.text = "Waiting"
+        binding.dataStatus.setTextColor(Color.RED)
+
+
+
     }
-    @SuppressLint("CheckResult")
+    @SuppressLint("CheckResult", "SetTextI18n")
     private fun subscribeUi(){
+        // Timer
+        val timer =viewModel.timerInterval.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { t ->
+            if(viewModel.startLocationStatus.value!!){
+                timer.tick()
+                binding.dataTimer.text = timer.toString()
+            }
+        }
+
+        // Distance
+        viewModel.distanceKm.subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({ distance ->
+                    binding.dataDistanceKm.text=makeDistanceString(distance)+" km"},
+                        {error->Log.e(TAG, error.toString())})
+        viewModel.distanceM.subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({ distance ->
+                    binding.dataDistanceM.text=makeDistanceString(distance)+" m"},
+                        {error ->Log.e(TAG,error.toString())})
+
+
+        // Speed
+        viewModel.speedKmh.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { speedKmh ->
+            binding.dataSpeedKmh.text = makeDistanceString(speedKmh)+" km/h"
+        }
+        viewModel.speedMs.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { speedMs ->
+            binding.dataSpeedMs.text = makeDistanceString(speedMs)+" m/s"
+        }
+
+        // Start location status
+        viewModel.startLocationStatus.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { status ->
+            if(status) {
+                binding.startLocationStatus.visibility=View.GONE
+                binding.startLocationCompleted.visibility = View.VISIBLE
+                binding.dataStatus.text="In progress"
+                binding.dataStatus.setTextColor(Color.parseColor("#AA0D6EB8"))
+            }
+        }
+        //End location status
+        viewModel.endLocationStatus.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { status ->
+            if(status && viewModel.startLocationStatus.value!!) {
+                binding.endLocationStatus.visibility=View.GONE
+                binding.endLocationCompleted.visibility = View.VISIBLE
+                binding.dataStatus.text = "Completed"
+                binding.dataStatus.setTextColor(Color.parseColor("#AA088C15"))
+                timer.dispose()
+
+            }
+        }
+
+
+
+
+
+
+
         // Current location
         viewModel.getLastCoordinates()
                 .subscribeOn(Schedulers.io())
@@ -276,6 +348,13 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
     companion object{
         const val TAG = "MovementFragment"
+    }
+
+    private fun makeDistanceString(tmp: Double):String {
+        if(tmp.toString() == "0.0"){return "0.0"}
+        else{
+            return tmp.toString().substring(0,tmp.toString().indexOf(".")+3)
+        }
     }
 
 }

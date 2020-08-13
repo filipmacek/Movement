@@ -21,7 +21,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:layout_marginHorizontal="10dp"
                 app:cardCornerRadius="3dp"
@@ -84,7 +84,7 @@
                            android:layout_height="wrap_content"
                            android:text="Current location"
                            android:textColor="@color/blackText"
-                           android:textSize="11sp"
+                           android:textSize="13sp"
                            android:layout_marginHorizontal="7sp"/>
 
 
@@ -111,7 +111,7 @@
                            android:layout_height="wrap_content"
                            android:text="Data points"
                            android:textColor="@color/blackText"
-                           android:textSize="11sp"
+                           android:textSize="13sp"
                            android:layout_marginHorizontal="7sp"/>
 
 
@@ -130,34 +130,168 @@
                   <View
                       android:layout_width="match_parent"
                       android:layout_height="1dp"
-                      android:layout_marginVertical="8sp"
+                      android:layout_marginVertical="4sp"
                       android:background="@android:color/darker_gray"/>
 
-
-                <LinearLayout
+                   <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="9sp">
-                    <TextView
-                        android:layout_weight="1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Status"
-                        android:textColor="@color/blackText"
-                        android:textSize="18sp"
-                        android:fontFamily="monospace"
-                        android:paddingHorizontal="10dp"
-                        tools:layout_editor_absoluteX="15dp"
-                        tools:layout_editor_absoluteY="15dp"
-                        tools:ignore="MissingConstraints" />
+                    android:layout_marginBottom="0sp">
+                       <TextView
+                           android:layout_weight="1"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginVertical="6dp"
+                           android:text="Status"
+                           android:textColor="@color/blackText"
+                           android:textSize="16sp"
+                           android:fontFamily="monospace"
+                           android:paddingHorizontal="6dp"
+                           tools:layout_editor_absoluteX="15dp"
+                           tools:layout_editor_absoluteY="15dp"
+                           tools:ignore="MissingConstraints" />
+
+
+                       <TextView
+                           android:id="@+id/dataStatus"
+                           android:layout_weight="1"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginVertical="6dp"
+                           android:text="Not started"
+                           android:textColor="@color/blackText"
+                           android:textSize="16sp"
+                           android:fontFamily="monospace"
+                           android:paddingHorizontal="6dp"
+                           tools:layout_editor_absoluteX="15dp"
+                           tools:layout_editor_absoluteY="15dp"
+                           tools:ignore="MissingConstraints" />
+
+
                 </LinearLayout>
 
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal"
+                       android:layout_marginVertical="3dp"
+                       >
 
-                    <LinearLayout
+                       <LinearLayout
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="3"
+                           android:orientation="horizontal"
+                           >
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="Time"
+                               android:textColor="@color/blackText"
+                               android:textSize="13sp"
+                               android:layout_marginHorizontal="7sp"/>
+
+
+                           <TextView
+                               android:id="@+id/dataTimer"
+                               android:textColor="@color/blackText"
+                               android:layout_width="match_parent"
+                               android:layout_height="wrap_content"
+                               android:layout_marginHorizontal="8sp"
+                               android:text=""
+                               tools:layout_editor_absoluteX="16dp"
+                               tools:layout_editor_absoluteY="55dp"
+                               tools:ignore="MissingConstraints" />
+                       </LinearLayout>
+                       <LinearLayout
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="2">
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="Distance"
+                               android:textColor="@color/blackText"
+                               android:textSize="13sp"
+                               android:layout_marginHorizontal="7sp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/dataDistanceKm"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/blackText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="8sp"
+                                    android:text=""
+                                    tools:layout_editor_absoluteX="16dp"
+                                    tools:layout_editor_absoluteY="55dp"
+                                    tools:ignore="MissingConstraints" />
+                                <TextView
+                                    android:id="@+id/dataDistanceM"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/blackText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="8sp"
+                                    android:text=""
+                                    tools:layout_editor_absoluteX="16dp"
+                                    tools:layout_editor_absoluteY="55dp"
+                                    tools:ignore="MissingConstraints" />
+                            </LinearLayout>
+
+                       </LinearLayout>
+
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal">
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="Current Speed"
+                           android:textColor="@color/blackText"
+                           android:textSize="13sp"
+                           android:layout_marginHorizontal="7sp"/>
+
+                       <TextView
+                           android:id="@+id/dataSpeedKmh"
+                           android:textColor="@color/blackText"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginHorizontal="8sp"
+                           android:text=""
+                           tools:layout_editor_absoluteX="16dp"
+                           tools:layout_editor_absoluteY="55dp"
+                           tools:ignore="MissingConstraints" />
+                       <TextView
+                           android:id="@+id/dataSpeedMs"
+                           android:textColor="@color/blackText"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginHorizontal="8sp"
+                           android:text=""
+                           tools:layout_editor_absoluteX="16dp"
+                           tools:layout_editor_absoluteY="55dp"
+                           tools:ignore="MissingConstraints" />
+
+
+
+
+                   </LinearLayout>
+
+                   <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginTop="7sp"
+                       >
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -169,14 +303,22 @@
                                 android:layout_height="wrap_content"
                                 android:text="Start location"
                                 android:textColor="@color/blackText"
-                                android:textSize="12sp"
-                                android:layout_marginHorizontal="7sp"/>
+                                android:textSize="13sp"
+                                android:layout_marginHorizontal="7sp"
+                                android:layout_marginRight="12dp"
+                                />
                             <ProgressBar
-                                android:id="@+id/startDestinationProgress"
+                                android:id="@+id/startLocationStatus"
                                 style="?android:attr/progressBarStyle"
                                 android:layout_width="20sp"
                                 android:layout_height="20sp"
                                 android:visibility="visible"/>
+                            <ImageView
+                                android:id="@+id/startLocationCompleted"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:src="@drawable/ic_baseline_beenhere_24"
+                                android:visibility="invisible"/>
                         </LinearLayout>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -189,30 +331,79 @@
                                 android:layout_height="wrap_content"
                                 android:text="End location"
                                 android:textColor="@color/blackText"
-                                android:textSize="12sp"
-                                android:layout_marginHorizontal="7sp"/>
+                                android:textSize="13sp"
+                                android:layout_marginHorizontal="7sp"
+                                android:layout_marginRight="12dp"
+                                />
                             <ProgressBar
-                                android:id="@+id/endDestinationProgress"
+                                android:id="@+id/endLocationStatus"
                                 style="?android:attr/progressBarStyle"
                                 android:layout_width="20sp"
                                 android:layout_height="20sp"
                                 android:visibility="visible"/>
+                            <ImageView
+                                android:id="@+id/endLocationCompleted"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:src="@drawable/ic_baseline_beenhere_24"
+                                android:visibility="invisible"/>
                         </LinearLayout>
 
                     </LinearLayout>
 
-               </LinearLayout>
 
+                   <View
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:layout_marginVertical="4sp"
+                       android:background="@android:color/darker_gray"
+                       android:layout_marginTop="6sp"
+                       />
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal"
+                       android:layout_marginVertical="5dp"
+                       >
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="Nodes"
+                           android:textColor="@color/blackText"
+                           android:textSize="18sp"
+                           android:fontFamily="monospace"
+                           tools:layout_editor_absoluteX="15dp"
+                           tools:layout_editor_absoluteY="15dp"
+                           tools:ignore="MissingConstraints" />
+
+
+
+
+
+                   </LinearLayout>
 <!--                   <com.google.android.material.button.MaterialButton-->
-<!--                       android:id="@+id/clear_database"-->
+<!--                       android:id="@+id/startButton"-->
 <!--                       android:layout_width="100dp"-->
 <!--                       android:layout_marginVertical="8dp"-->
 <!--                       android:layout_height="50dp"-->
-<!--                       android:text="Clear"-->
+<!--                       android:text="DA"-->
 <!--                       android:textAlignment="center"-->
 <!--                       app:layout_constraintTop_toBottomOf="@+id/latLong"-->
 <!--                       tools:layout_editor_absoluteX="-6dp"-->
 <!--                       tools:ignore="MissingConstraints" />-->
+<!--                   <com.google.android.material.button.MaterialButton-->
+<!--                       android:id="@+id/endButton"-->
+<!--                       android:layout_width="100dp"-->
+<!--                       android:layout_marginVertical="8dp"-->
+<!--                       android:layout_height="50dp"-->
+<!--                       android:text="DA"-->
+<!--                       android:textAlignment="center"-->
+<!--                       app:layout_constraintTop_toBottomOf="@+id/latLong"-->
+<!--                       tools:layout_editor_absoluteX="-6dp"-->
+<!--                       tools:ignore="MissingConstraints" />-->
+               </LinearLayout>
+
 
 
 
