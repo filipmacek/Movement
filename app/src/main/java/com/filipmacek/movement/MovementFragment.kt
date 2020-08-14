@@ -66,6 +66,10 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
     private lateinit var route:Route
 
+    private var dataStatusPointTextViews:ArrayList<TextView> = arrayListOf()
+
+    private var nodeStatusConnectionImageViews:ArrayList<ImageView> = arrayListOf()
+
     private  var timer:Timer = Timer()
 
     private lateinit var startDestination:Destination
@@ -198,6 +202,9 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         dataPoints.textSize = 14.0F
         dataPoints.setTextColor(Color.BLACK)
 
+        // Add to list of dataStatusPointsTextViews
+        dataStatusPointTextViews.add(dataPoints)
+
         // Stupid ?!
         if(index ==1 ){dataPoints.id=R.id.node_DataPoints_1}
         else if( index ==2){dataPoints.id=R.id.node_DataPoints_2}
@@ -212,6 +219,9 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
         connectionImageView.layoutParams = params_connection
         connectionImageView.setImageResource(R.drawable.node_inactive)
+
+        // Add to list of nodeStatusConnectionImageViews
+        nodeStatusConnectionImageViews.add(connectionImageView)
 
 
         node_row.addView(indexTextView)
@@ -293,16 +303,26 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
             }
         }
+        viewModel.nodeStatusData.mapIndexed { index, temp ->
+            temp.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe{count->
+                var all_points:Int? = null
+                if(viewModel.pointLast.value == null){all_points=0}else {all_points= viewModel.pointLast.value?.index }
+                getViewByString("node_DataPoints_"+(index+1).toString())?.text = count.toString()+"/"+all_points.toString()
 
-
-
-
-
+            }
+        }
+        viewModel.nodeStatusConnection.mapIndexed { index, status->
+            status.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe({status ->
+                if(status){
+                    nodeStatusConnectionImageViews[index].setImageResource(R.drawable.node_active)
+                }
+            })
+        }
 
 
 
         // Current location
-        viewModel.getLastCoordinates()
+        viewModel.pointLast
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -311,6 +331,11 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                             binding.dataPoints.blink(1)
                             binding.currentLocation.text = makeCoordinateString(coordinate)
                             binding.dataPoints.text = coordinate.index.toString()
+                            dataStatusPointTextViews.mapIndexed { index, textView ->
+                                textView.text = viewModel.nodeStatusData[index].value.toString()+"/"+coordinate.index.toString()
+                            }
+
+
                         },
                         {error -> Log.i(TAG,"Error "+error) })
 

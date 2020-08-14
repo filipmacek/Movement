@@ -14,6 +14,7 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import org.web3j.abi.datatypes.Bool
 import java.util.concurrent.TimeUnit
 
 
@@ -30,6 +31,7 @@ class MovementViewModel(private val routeRepository: RouteRepository,
     private val threshHold:Int = 20
 
     val nodeStatusData:ArrayList<BehaviorSubject<Int>> = arrayListOf()
+    val nodeStatusConnection:ArrayList<BehaviorSubject<Boolean>> = arrayListOf()
 
     // Timer
     val timerInterval = Observable.interval(1000L,TimeUnit.MILLISECONDS).timeInterval().observeOn(Schedulers.computation())
@@ -49,6 +51,8 @@ class MovementViewModel(private val routeRepository: RouteRepository,
     // Start && end location status
     val startLocationStatus:BehaviorSubject<Boolean> = BehaviorSubject.create()
     val endLocationStatus:BehaviorSubject<Boolean> = BehaviorSubject.create()
+
+
 
     val mainComputationChecker= locationRepository.getLastCoordinate().subscribeOn(Schedulers.io()).observeOn(Schedulers.computation()).subscribe{coordinate ->
         // Check first
@@ -83,6 +87,21 @@ class MovementViewModel(private val routeRepository: RouteRepository,
         speedKmh.onNext(pointLast.value!!.getVelocityKmh(pointPreLast.value!!))
         speedMs.onNext(pointLast.value!!.getVelocityMs(pointPreLast.value!!))
 
+        // Post it to nodes
+        nodes?.mapIndexed { index,node ->
+            nodeRepository.postDataToNode(node, route?.routeId!!,coordinate).subscribeOn(Schedulers.io()).observeOn(Schedulers.computation()).subscribe(
+                    {
+                        // OnNext --- Call completed-data has been sent to node
+                        Log.i(TAG,"Sent!!!Successful POST data request to node "+node.nodeName)
+                        nodeStatusData[index].onNext(nodeStatusData[index].value!! +1)
+                        nodeStatusConnection[index].onNext(true)
+                    },
+                    {
+                        Log.i(TAG,"Error sending data to node "+node.nodeName)
+                        nodeStatusConnection[index].onNext(false)
+                    })
+        }
+
     }
 
 
@@ -108,8 +127,12 @@ class MovementViewModel(private val routeRepository: RouteRepository,
         // Nodes
         nodes = nodeRepository.getNodesSync()
 
-        nodes!!.map { nodeStatusData.add(BehaviorSubject.create()) }
+        nodes!!.map {
+            nodeStatusData.add(BehaviorSubject.create())
+            nodeStatusConnection.add(BehaviorSubject.create())
+        }
         nodeStatusData.map { it.onNext(0) }
+        nodeStatusConnection.map{it.onNext(false)}
 
     }
 
