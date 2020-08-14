@@ -11,6 +11,10 @@ interface NodeDao {
     @Query("SELECT * FROM nodes")
     fun getAll(): LiveData<List<Node>>
 
+
+    @Query("SELECT * FROM nodes")
+    fun getAllSync(): List<Node>
+
     @Query("SELECT * FROM nodes WHERE nodeId= :nodeId")
     fun getNodeById(nodeId: String): Node
 

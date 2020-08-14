@@ -50,7 +50,7 @@ class NodeListAdapter(private var nodes: List<Node>):ListAdapter<Node,NodeListAd
             .timeInterval()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe {
-                val response = nodeRepository.checkIfNodeReady(nodes[position].ip)
+                val response = nodeRepository.checkIfNodeReady(nodes[position].ip,nodes[position].dataEndpoint)
                 response.enqueue(object: Callback<Ready>{
                     override fun onResponse(call: Call<Ready>, response: Response<Ready>) {
                         println("OnResponse")

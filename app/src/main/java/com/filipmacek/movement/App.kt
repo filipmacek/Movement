@@ -49,7 +49,7 @@ class App: Application() {
         viewModel { NodeViewModel(get()) }
         viewModel { MainActivityViewModel() }
         viewModel { AccountViewModel() }
-        viewModel {MovementViewModel(get(),get()) }
+        viewModel {MovementViewModel(get(),get(),get()) }
     }
 
 

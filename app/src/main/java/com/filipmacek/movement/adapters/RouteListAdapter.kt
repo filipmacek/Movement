@@ -33,7 +33,7 @@ class RouteListAdapter (private var routes: List<Route>): ListAdapter<Route, Rou
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.routeId.text=makeProperString(routes[position].routeId)
+        holder.routeId.text=routes[position].routeId
         holder.maker.text=makeProperString(routes[position].maker)
         holder.startLocation.text=routes[position].startLocation
         holder.endLocation.text=routes[position].endLocation

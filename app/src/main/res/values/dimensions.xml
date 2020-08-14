@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="node_name" type="dimen">70dp</item>
+    <item name="node_ip" type="dimen">110dp</item>
+
+    <item name="node_connection" type="dimen">18dp</item>
+</resources>

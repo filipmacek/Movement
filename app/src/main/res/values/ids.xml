@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="node_DataPoints_1" type="id"/>
+    <item name="node_DataPoints_2" type="id"/>
+    <item name="node_DataPoints_3" type="id"/>
+    <item name="node_DataPoints_4" type="id"/>
+    <item name="used_for_package_name_retrieval" type="id"/>
+
+
+</resources>

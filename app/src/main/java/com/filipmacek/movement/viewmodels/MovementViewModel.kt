@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.filipmacek.movement.data.location.Coordinate
 import com.filipmacek.movement.data.location.LocationRepository
 import com.filipmacek.movement.data.location.Timer
+import com.filipmacek.movement.data.nodes.Node
+import com.filipmacek.movement.data.nodes.NodeRepository
 import com.filipmacek.movement.data.routes.Route
 import com.filipmacek.movement.data.routes.RouteRepository
 import com.google.android.gms.maps.model.LatLng
@@ -15,13 +17,19 @@ import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 
-class MovementViewModel(private val routeRepository: RouteRepository,private val locationRepository: LocationRepository) :ViewModel() {
+class MovementViewModel(private val routeRepository: RouteRepository,
+                        private val locationRepository: LocationRepository,
+                        private val nodeRepository: NodeRepository) :ViewModel() {
     // Route object
     var route:Route? =null
+
+    var nodes:List<Node>? = null
     // Start && end location
     var startLocation:Coordinate? =null
     var endLocation:Coordinate?= null
     private val threshHold:Int = 20
+
+    val nodeStatusData:ArrayList<BehaviorSubject<Int>> = arrayListOf()
 
     // Timer
     val timerInterval = Observable.interval(1000L,TimeUnit.MILLISECONDS).timeInterval().observeOn(Schedulers.computation())
@@ -53,8 +61,6 @@ class MovementViewModel(private val routeRepository: RouteRepository,private val
         }
         pointLast.onNext(coordinate)
         pointPreLast.onNext(current_last!!)
-        Log.i(TAG,"POINT LAST "+pointLast.value.toString())
-        Log.i(TAG,"PREPOINT LAST "+pointPreLast.value.toString())
 
         // Start location check
         if(startLocation?.checkIfNearby(coordinate,threshHold)!!) {
@@ -98,6 +104,12 @@ class MovementViewModel(private val routeRepository: RouteRepository,private val
         //Speed
         speedMs.onNext(0.0)
         speedKmh.onNext(0.0)
+
+        // Nodes
+        nodes = nodeRepository.getNodesSync()
+
+        nodes!!.map { nodeStatusData.add(BehaviorSubject.create()) }
+        nodeStatusData.map { it.onNext(0) }
 
     }
 

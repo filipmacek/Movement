@@ -372,16 +372,25 @@
                            android:text="Nodes"
                            android:textColor="@color/blackText"
                            android:textSize="18sp"
+                           android:paddingHorizontal="6dp"
                            android:fontFamily="monospace"
                            tools:layout_editor_absoluteX="15dp"
                            tools:layout_editor_absoluteY="15dp"
                            tools:ignore="MissingConstraints" />
 
 
+                       </LinearLayout>
+
+                       <LinearLayout
+                           android:id="@+id/nodesList"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:orientation="vertical">
 
 
 
-                   </LinearLayout>
+
+                       </LinearLayout>
 <!--                   <com.google.android.material.button.MaterialButton-->
 <!--                       android:id="@+id/startButton"-->
 <!--                       android:layout_width="100dp"-->
@@ -413,14 +422,16 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-
             <fragment
                 android:id="@+id/movement_map"
-                android:layout_margin="12dp"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="450dp"
-                android:layout_marginTop="20dp"
-                android:name="com.google.android.gms.maps.SupportMapFragment"/>
+                android:layout_height="410dp"
+                android:layout_margin="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
+
+
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

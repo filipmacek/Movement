@@ -13,12 +13,14 @@ class NodeRepository(private val nodeDao: NodeDao) {
 
     fun getNodes() = nodeDao.getAll()
 
+    fun getNodesSync()= nodeDao.getAllSync()
+
     fun getNodeById(nodeId:String) = nodeDao.getNodeById(nodeId)
 
-    fun checkIfNodeReady(nodeIp:String) = (nodeServiceMap[nodeIp] ?: NodeApiService.create(nodeIp)
+    fun checkIfNodeReady(nodeIp:String,dataEndpoint:String) = (nodeServiceMap[nodeIp] ?: NodeApiService.create(nodeIp)
                 .also {
                     nodeServiceMap[nodeIp]=it
-                }).ready()
+                }).ready(dataEndpoint)
 
     }
 

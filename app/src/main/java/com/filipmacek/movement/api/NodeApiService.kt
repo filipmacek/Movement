@@ -9,14 +9,15 @@ import retrofit2.adapter.rxjava2.Result
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import java.util.*
 
 data class Ready(var status:String)
 
 interface NodeApiService {
 
-    @GET("ready")
-    fun ready():Call<Ready>
+    @GET("{data_endpoint}/ready")
+    fun ready(@Path("data_endpoint") endpoint:String):Call<Ready>
 
     companion object {
 

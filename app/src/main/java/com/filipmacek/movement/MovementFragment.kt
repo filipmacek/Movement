@@ -3,29 +3,25 @@ package com.filipmacek.movement
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.*
-import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.Color.RED
 import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.fragment.navArgs
 import com.filipmacek.movement.data.location.Coordinate
 import com.filipmacek.movement.data.location.CoordinatesDao
-import com.filipmacek.movement.data.location.LocationRepository
 import com.filipmacek.movement.data.location.Timer
+import com.filipmacek.movement.data.nodes.Node
 import com.filipmacek.movement.data.routes.Route
 import com.filipmacek.movement.databinding.MovementFragmentBinding
 import com.filipmacek.movement.services.MovementLocationService
@@ -40,16 +36,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.koin.android.ext.android.bind
-import org.koin.android.ext.android.get
-
 import org.koin.android.ext.android.inject
-import org.koin.androidx.scope.bindScope
-import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-import java.time.LocalDateTime
-import kotlin.coroutines.coroutineContext
+import kotlin.math.roundToInt
+import com.filipmacek.movement.R
+
 
 fun TextView.blink(
         times: Int = Animation.INFINITE,
@@ -154,11 +145,88 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
 
     }
+    fun createNodeRow(index:Int,node:Node):Unit{
+        val nodeListLayout = binding.nodesList
+
+        val node_row = LinearLayout(context)
+        node_row.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT)
+        node_row.orientation = LinearLayout.HORIZONTAL
+
+        // Index of node
+        val indexTextView = TextView(context)
+        val params_index = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT)
+        params_index.setMargins(20,8,15,15)
+
+        indexTextView.layoutParams=params_index
+        indexTextView.text = index.toString()+"."
+        indexTextView.textSize = 14.0F
+        indexTextView.setTextColor(Color.BLACK)
+
+
+        //Name of node
+        val nameTextView=TextView(context)
+        val width_name = resources.getDimension(R.dimen.node_name).roundToInt()
+        val params_name=LinearLayout.LayoutParams(width_name,LinearLayout.LayoutParams.WRAP_CONTENT)
+        params_name.setMargins(20,8,15,15)
+
+
+
+        nameTextView.layoutParams = params_name
+        nameTextView.text=node.nodeName.toString()
+        nameTextView.textSize = 14.0F
+        nameTextView.setTextColor(Color.BLACK)
+
+        // Ip address
+        val ipTextView=TextView(context)
+        val width_ip = resources.getDimension(R.dimen.node_ip).roundToInt()
+        val params_ip=LinearLayout.LayoutParams(width_ip,LinearLayout.LayoutParams.WRAP_CONTENT)
+        params_ip.setMargins(20,8,15,15)
+
+        ipTextView.layoutParams = params_ip
+        ipTextView.text=node.ip
+        ipTextView.textSize = 14.0F
+        ipTextView.setTextColor(Color.BLACK)
+
+        // Data points
+        val dataPoints = TextView(context)
+        val params_dataPoints = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT)
+        params_dataPoints.setMargins(180,8,15,15)
+
+
+        dataPoints.layoutParams = params_dataPoints
+        dataPoints.text="0/0"
+        dataPoints.textSize = 14.0F
+        dataPoints.setTextColor(Color.BLACK)
+
+        // Stupid ?!
+        if(index ==1 ){dataPoints.id=R.id.node_DataPoints_1}
+        else if( index ==2){dataPoints.id=R.id.node_DataPoints_2}
+        else if(index==3){dataPoints.id = R.id.node_DataPoints_3}
+        else if(index ==4) {dataPoints.id = R.id.node_DataPoints_4}
+
+        // Connection image view
+        val connectionImageView = ImageView(context)
+        val dimen = resources.getDimension(R.dimen.node_connection).roundToInt()
+        val params_connection = LinearLayout.LayoutParams(dimen,dimen)
+        params_connection.setMargins(25,10,10,10)
+
+        connectionImageView.layoutParams = params_connection
+        connectionImageView.setImageResource(R.drawable.node_inactive)
+
+
+        node_row.addView(indexTextView)
+        node_row.addView(nameTextView)
+        node_row.addView(ipTextView)
+        node_row.addView(dataPoints)
+        node_row.addView(connectionImageView)
+
+        nodeListLayout.addView(node_row)
+    }
 
     private fun loadUi(){
 
         // Route data
-        binding.routeIdInfo.text =makeProperString(route?.routeId)
+        binding.routeIdInfo.text =route?.routeId
 
         // Timer
         binding.dataTimer.text=timer.toString()
@@ -166,6 +234,12 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         // Route status
         binding.dataStatus.text = "Waiting"
         binding.dataStatus.setTextColor(Color.RED)
+
+        // Nodes
+        viewModel.nodes?.mapIndexed{ index, node->
+            createNodeRow(index = index+1,node = node)
+        }
+
 
 
 
@@ -226,6 +300,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
 
 
+
         // Current location
         viewModel.getLastCoordinates()
                 .subscribeOn(Schedulers.io())
@@ -248,7 +323,6 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         val serviceIntent = Intent(context,MovementLocationService::class.java)
         activity?.bindService(serviceIntent,locationServiceConnection,Context.BIND_AUTO_CREATE)
 
-
     }
 
     override fun onResume() {
@@ -260,6 +334,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
             IntentFilter(MovementLocationService.ACTION_LOCATION_BROADCAST)
 
         )
+
     }
 
     override fun onPause() {
@@ -344,6 +419,11 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                 s?.substring(0, coma_index!!)?.toDouble()!!,
                 s.substring(coma_index!! + 1).toDouble()
         )
+    }
+
+    private fun getViewByString(s:String): TextView? {
+        return view?.findViewById<TextView>(resources.getIdentifier(s,"id",resources.getResourcePackageName(R.id.used_for_package_name_retrieval)))
+
     }
 
     companion object{

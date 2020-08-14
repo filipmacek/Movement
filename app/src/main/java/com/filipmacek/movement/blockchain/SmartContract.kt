@@ -8,11 +8,12 @@ import org.web3j.protocol.infura.InfuraHttpService
 import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
 import java.math.BigInteger
+import java.nio.charset.Charset
 
 class SmartContract(){
     private  var web3j:Web3j
     private val urlInfura="https://kovan.infura.io/v3/42f42a255e264be7a6bc8373c4308e96"
-    private val address="0xB5125F78e4c745de1957B1BF56E59C7950796BAd"
+    private val address="0x7468fd7961Caa0dB1b184040862613A981E3A77E"
     private val contractManager: ReadonlyTransactionManager
     private var contract: Movement_contract?=null
     init {
