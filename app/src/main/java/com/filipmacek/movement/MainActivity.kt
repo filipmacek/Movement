@@ -2,29 +2,18 @@ package com.filipmacek.movement
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.karumi.dexter.Dexter
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.*
-import android.location.Location
-import android.os.IBinder
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.Navigation
+import android.util.Log
 import com.filipmacek.movement.data.location.Coordinate
-import com.filipmacek.movement.data.location.LocationRepository
-import com.filipmacek.movement.data.users.User
-import com.filipmacek.movement.services.MovementLocationService
 import com.filipmacek.movement.viewmodels.MainActivityViewModel
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.SettingsClient
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import org.koin.android.ext.android.inject
-import java.io.File
-
+import com.filipmacek.movement.BuildConfig
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -55,9 +44,8 @@ class MainActivity : AppCompatActivity() {
                             token: PermissionToken?
                     ) {}
                 }).check()
-
-
     }
+
 
 
 

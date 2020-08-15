@@ -6,6 +6,10 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'koin'
 
+def appSecretsFile = rootProject.file("appsecrets.properties")
+def appSecrets = new Properties()
+appSecrets.load(new FileInputStream(appSecretsFile))
+
 android {
     compileSdkVersion rootProject.compileSdkVersion
     buildFeatures {
@@ -19,6 +23,13 @@ android {
         versionCode 1
         versionName "0.1.6"
         vectorDrawables.useSupportLibrary true
+
+        // Agent private key
+        buildConfigField("String","AGENT_PRIVATE_KEY",appSecrets["AGENT_PRIVATE_KEY"])
+        buildConfigField("String","INFURA_NODE_URL",appSecrets["INFURA_NODE_URL"])
+        buildConfigField("String","CONTRACT_ADDRESS",appSecrets["CONTRACT_ADDRESS"])
+        buildConfigField("String","AGENT_ADDRESS",appSecrets["AGENT_ADDRESS"])
+
 
     }
     buildTypes {
