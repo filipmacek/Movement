@@ -16,10 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.filipmacek.movement.MovementFragment
 import com.filipmacek.movement.R
 import com.filipmacek.movement.data.routes.Route
+import com.filipmacek.movement.data.users.User
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-class RouteListAdapter (private var routes: List<Route>): ListAdapter<Route, RouteListAdapter.ViewHolder>(RouteItemDiffCallback()) {
+class RouteListAdapter (private var routes: List<Route>,private val user: String): ListAdapter<Route, RouteListAdapter.ViewHolder>(RouteItemDiffCallback()) {
 
     // Context global var
     private lateinit var context: Context
@@ -38,6 +39,7 @@ class RouteListAdapter (private var routes: List<Route>): ListAdapter<Route, Rou
         holder.startLocation.text=routes[position].startLocation
         holder.endLocation.text=routes[position].endLocation
 
+
         val dialog=MaterialAlertDialogBuilder(context)
             .setTitle("You are starting route.Proceed?")
             .setNegativeButton("No") { dialog,which ->
@@ -46,7 +48,7 @@ class RouteListAdapter (private var routes: List<Route>): ListAdapter<Route, Rou
             }
             .setPositiveButton("Yes") { dialog,which ->
                 Log.i("Route starts","Route is starting")
-                val bundle_start = bundleOf("routeId" to routes[position].routeId)
+                val bundle_start = bundleOf("routeId" to routes[position].routeId,"username" to user)
                 Navigation.findNavController(holder.itemView).navigate(R.id.action_dashboard_to_movement_page,bundle_start)
             }
 

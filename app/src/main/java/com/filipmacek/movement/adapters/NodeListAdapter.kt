@@ -53,7 +53,6 @@ class NodeListAdapter(private var nodes: List<Node>):ListAdapter<Node,NodeListAd
                 val response = nodeRepository.checkIfNodeReady(nodes[position].ip,nodes[position].dataEndpoint)
                 response.enqueue(object: Callback<Ready>{
                     override fun onResponse(call: Call<Ready>, response: Response<Ready>) {
-                        println("OnResponse")
                         if(response.body()?.status == "Ready"){
                             holder.nodeStatus.setBackgroundColor(Color.GREEN)
                             holder.nodeStatusText.text = "Connected"

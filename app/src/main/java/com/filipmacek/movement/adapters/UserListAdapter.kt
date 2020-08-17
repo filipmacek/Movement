@@ -12,6 +12,7 @@ import android.widget.Button
 import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 
@@ -49,9 +50,9 @@ class UserListAdapter (private var users: List<User>):ListAdapter<User,UserListA
                     val username=users[position].username
                     //Check if password is valid
                     val user:User = userRepository.getUserByUsername(username)
-
+                    val bundle_username = bundleOf("username" to user.username)
                     if(user.password == password) {
-                        Navigation.findNavController(holder.itemView).navigate(R.id.action_user_list_to_dashboard)
+                        Navigation.findNavController(holder.itemView).navigate(R.id.action_user_list_to_dashboard,bundle_username)
                     }else {
                         val toast = Toast.makeText(context,"Incorrect password",Toast.LENGTH_SHORT)
                         val toastView= toast.view

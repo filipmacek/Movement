@@ -11,18 +11,14 @@ import java.math.BigInteger
 import java.nio.charset.Charset
 import com.filipmacek.movement.BuildConfig
 
-class SmartContract(){
-    private  var web3j:Web3j
-    private val urlInfura= BuildConfig.INFURA_NODE_URL
+class SmartContract(web3j: Web3j){
     private val address=BuildConfig.CONTRACT_ADDRESS
     private val contractManager: ReadonlyTransactionManager
-    private var contract: Movement_contract?=null
+    private var contract: Movement?=null
     init {
-        web3j = Web3j.build(InfuraHttpService(urlInfura))
-        println(web3j.ethBlockNumber())
         contractManager = ReadonlyTransactionManager(web3j,address)
 
-        contract = Movement_contract.load(address,web3j,contractManager,DefaultGasProvider())
+        contract = Movement.load(address,web3j,contractManager,DefaultGasProvider())
     }
 
     fun getAllUsers(): List<User> {
@@ -30,10 +26,12 @@ class SmartContract(){
         val userList= emptyList<User>().toMutableList()
         val usersCount= this.contract?.usersCount?.sendAsync()?.get()?.toInt()
         for (i in 0 until usersCount!!){
-            val (username,password,address,isExist)=
+            val (userId,username,password,address,
+                    isExist,routesStarted,routesFinished,routesCompleted)=
                 checkNotNull(this.contract?.users(BigInteger(i.toString()))?.sendAsync()?.get())
 
-            userList.add(i,User(username,password,address))
+            userList.add(i,User(userId.toString(),username,password,address,
+                    routesStarted.toInt(),routesFinished.toInt(),routesCompleted.toInt()))
         }
         return userList
     }

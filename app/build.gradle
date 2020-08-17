@@ -132,7 +132,9 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:17.0.0"
 
 
-
+    // Spongy castle
+    implementation 'com.madgag.spongycastle:core:1.58.0.0'
+    implementation 'com.madgag.spongycastle:prov:1.58.0.0'
 
 
 

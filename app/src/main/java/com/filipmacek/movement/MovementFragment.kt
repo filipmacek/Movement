@@ -2,12 +2,14 @@ package com.filipmacek.movement
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.*
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +18,11 @@ import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.filipmacek.movement.data.location.Coordinate
 import com.filipmacek.movement.data.location.CoordinatesDao
 import com.filipmacek.movement.data.location.Timer
@@ -40,6 +45,10 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 import com.filipmacek.movement.R
+import com.filipmacek.movement.data.users.User
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 
 
 fun TextView.blink(
@@ -63,6 +72,8 @@ data class Destination(
         val longitude:Double
 )
 class MovementFragment :Fragment(),OnMapReadyCallback{
+
+    private val compositeDisposable =CompositeDisposable()
 
     private lateinit var route:Route
 
@@ -127,7 +138,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         viewModel.clearDatabase()
 
         // Init route in viewModel
-        viewModel.initViewModel(arguments?.getString("routeId").toString())
+        viewModel.initViewModel(arguments?.getString("routeId").toString(),arguments?.getString("username").toString())
 
         // Load static data
         route = viewModel.routeById(arguments?.getString("routeId").toString())
@@ -140,6 +151,36 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
         // Init receiver
         locationBroadcastReceiver = LocationBroadcastReceiver()
+
+        // Set event if user press BACK button
+        // Which means he is canceling route and we have to report in to smart contract
+        binding.root.isFocusableInTouchMode = true
+        binding.root.requestFocus()
+        val dialog= MaterialAlertDialogBuilder(context)
+                .setTitle("You are leaving started route.Are you sure you want to cancel it.")
+                .setNegativeButton("Yes leave") { dialog, which ->
+
+                    // Cancel navigation service
+                    val cancelLocationIntent = Intent(context,MovementLocationService::class.java)
+                    cancelLocationIntent.putExtra(MovementLocationService.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION,true)
+                    val serviceCancelPendingIntent = PendingIntent.getService(context,0,cancelLocationIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+                    serviceCancelPendingIntent.send()
+                    binding.root.findNavController().navigateUp()
+
+                }.setPositiveButton("Stay"){dialog,which ->
+                    binding.root.requestFocus()
+
+                }.setCancelable(false)
+        binding.root.setOnKeyListener(View.OnKeyListener { view, keyCode, keyEvent ->
+            if(keyCode== KeyEvent.KEYCODE_BACK){
+                Log.i(TAG,"BACK KEY PRESSED")
+                dialog.show()
+                binding.root.clearFocus()
+                return@OnKeyListener true
+            }
+            return@OnKeyListener false
+        })
+
 
 
 
@@ -262,26 +303,26 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                 timer.tick()
                 binding.dataTimer.text = timer.toString()
             }
-        }
+        }.addTo(compositeDisposable)
 
         // Distance
         viewModel.distanceKm.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({ distance ->
                     binding.dataDistanceKm.text=makeDistanceString(distance)+" km"},
-                        {error->Log.e(TAG, error.toString())})
+                        {error->Log.e(TAG, error.toString())}).addTo(compositeDisposable)
         viewModel.distanceM.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({ distance ->
                     binding.dataDistanceM.text=makeDistanceString(distance)+" m"},
-                        {error ->Log.e(TAG,error.toString())})
+                        {error ->Log.e(TAG,error.toString())}).addTo(compositeDisposable)
 
 
         // Speed
         viewModel.speedKmh.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { speedKmh ->
             binding.dataSpeedKmh.text = makeDistanceString(speedKmh)+" km/h"
-        }
+        }.addTo(compositeDisposable)
         viewModel.speedMs.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { speedMs ->
             binding.dataSpeedMs.text = makeDistanceString(speedMs)+" m/s"
-        }
+        }.addTo(compositeDisposable)
 
         // Start location status
         viewModel.startLocationStatus.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { status ->
@@ -291,7 +332,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                 binding.dataStatus.text="In progress"
                 binding.dataStatus.setTextColor(Color.parseColor("#AA0D6EB8"))
             }
-        }
+        }.addTo(compositeDisposable)
         //End location status
         viewModel.endLocationStatus.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { status ->
             if(status && viewModel.startLocationStatus.value!!) {
@@ -302,21 +343,23 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                 timer.dispose()
 
             }
-        }
+        }.addTo(compositeDisposable)
         viewModel.nodeStatusData.mapIndexed { index, temp ->
             temp.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe{count->
                 var all_points:Int? = null
                 if(viewModel.pointLast.value == null){all_points=0}else {all_points= viewModel.pointLast.value?.index }
                 getViewByString("node_DataPoints_"+(index+1).toString())?.text = count.toString()+"/"+all_points.toString()
 
-            }
+            }.addTo(compositeDisposable)
         }
         viewModel.nodeStatusConnection.mapIndexed { index, status->
-            status.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe({status ->
+            status.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { status ->
                 if(status){
                     nodeStatusConnectionImageViews[index].setImageResource(R.drawable.node_active)
+                }else {
+                    nodeStatusConnectionImageViews[index].setImageResource(R.drawable.node_inactive)
                 }
-            })
+            }.addTo(compositeDisposable)
         }
 
 
@@ -335,9 +378,13 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                                 textView.text = viewModel.nodeStatusData[index].value.toString()+"/"+coordinate.index.toString()
                             }
 
+                            // After first location received Smart Contract agent will notify smart contract
+                            // on blockchain that route started and everything is fine with location sensor
+//                            viewModel.startRoute()
+
 
                         },
-                        {error -> Log.i(TAG,"Error "+error) })
+                        {error -> Log.i(TAG,"Error "+error) }).addTo(compositeDisposable)
 
     }
 
@@ -348,9 +395,14 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         val serviceIntent = Intent(context,MovementLocationService::class.java)
         activity?.bindService(serviceIntent,locationServiceConnection,Context.BIND_AUTO_CREATE)
 
+
     }
 
+
+
     override fun onResume() {
+        Log.i(TAG,"ONRESUME")
+
         super.onResume()
 
         // Register receiver
@@ -363,6 +415,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
     }
 
     override fun onPause() {
+        Log.i(TAG,"ONPAUSE")
         LocalBroadcastManager.getInstance(activity?.applicationContext!!).unregisterReceiver(
             locationBroadcastReceiver
         )
@@ -370,11 +423,26 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
     }
 
     override fun onStop() {
+        Log.i(TAG,"ONSTOP")
         if(locationServiceBound) {
+
             activity?.unbindService(locationServiceConnection)
             locationServiceBound=false
         }
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG,"ONDESTROY")
+        // Cancel navigation service
+        val cancelLocationIntent = Intent(context,MovementLocationService::class.java)
+        cancelLocationIntent.putExtra(MovementLocationService.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION,true)
+        val serviceCancelPendingIntent = PendingIntent.getService(context,0,cancelLocationIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+        serviceCancelPendingIntent.send()
+
+        // Clear composite disposable
+        compositeDisposable.clear()
     }
 
     @SuppressLint("MissingPermission")

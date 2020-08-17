@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.filipmacek.movement.adapters.ACCOUNT_PAGE
 import com.filipmacek.movement.adapters.DashboardPagerAdapter
 import com.filipmacek.movement.adapters.NODES_PAGE
 import com.filipmacek.movement.adapters.ROUTES_PAGE
 import com.filipmacek.movement.databinding.DashboardFragmentBinding
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import java.lang.IndexOutOfBoundsException
 
@@ -29,7 +27,9 @@ class DashboardFragment: Fragment(){
         val tabLayout = binding.tabs
         val viewPager= binding.viewPager
 
-        viewPager.adapter = DashboardPagerAdapter(this)
+        val username = arguments?.getString("username").toString()
+
+        viewPager.adapter = DashboardPagerAdapter(this,username)
 
         TabLayoutMediator(tabLayout,viewPager) { tab,position ->
             tab.setIcon(getTabIcon(position))

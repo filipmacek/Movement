@@ -9,11 +9,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.filipmacek.movement.adapters.RouteListAdapter
 import com.filipmacek.movement.adapters.UserListAdapter
+import com.filipmacek.movement.data.users.User
 import com.filipmacek.movement.databinding.RoutePageFragmentBinding
 import com.filipmacek.movement.viewmodels.RouteViewModel
 import org.koin.android.ext.android.inject
 
-class RoutePageFragment :Fragment(){
+class RoutePageFragment(private val username:String) :Fragment(){
 
     private lateinit var binding: RoutePageFragmentBinding
 
@@ -29,7 +30,7 @@ class RoutePageFragment :Fragment(){
 
         viewModel.routes.observe(viewLifecycleOwner, Observer { routes ->
 
-            val adapter = RouteListAdapter(routes)
+            val adapter = RouteListAdapter(routes,username)
             binding.routeList.adapter = adapter
             binding.routeList.layoutManager = LinearLayoutManager(context)
         })

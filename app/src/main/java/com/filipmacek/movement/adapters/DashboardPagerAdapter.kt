@@ -12,11 +12,11 @@ const val NODES_PAGE = 1
 const val ACCOUNT_PAGE = 2
 
 
-class DashboardPagerAdapter (fragment:Fragment):FragmentStateAdapter(fragment) {
+class DashboardPagerAdapter (fragment:Fragment,username:String):FragmentStateAdapter(fragment) {
 
     // Mapping of the ViewPager pages
     private val tabFragments: Map<Int,()-> Fragment> = mapOf(
-        ROUTES_PAGE to { RoutePageFragment() },
+        ROUTES_PAGE to { RoutePageFragment(username) },
         NODES_PAGE to { NodePageFragment() },
         ACCOUNT_PAGE to { AccountPageFragment() }
 

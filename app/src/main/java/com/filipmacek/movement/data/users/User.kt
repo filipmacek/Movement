@@ -7,7 +7,11 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = "users")
 data class User (
-    @PrimaryKey val username: String,
+    @PrimaryKey val userId: String,
+    val username:String,
     val password: String,
-    val address: String
+    val address: String,
+    val routesStarted:Int,
+    val routesFinished:Int,
+    val routesCompleted:Int
 )

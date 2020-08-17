@@ -5,7 +5,6 @@ import android.os.Bundle
 import com.karumi.dexter.Dexter
 import android.Manifest
 import android.annotation.SuppressLint
-import android.util.Log
 import com.filipmacek.movement.data.location.Coordinate
 import com.filipmacek.movement.viewmodels.MainActivityViewModel
 import com.karumi.dexter.MultiplePermissionsReport
@@ -14,6 +13,8 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import org.koin.android.ext.android.inject
 import com.filipmacek.movement.BuildConfig
+import java.security.Security
+import org.spongycastle.jce.provider.BouncyCastleProvider
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Insert Bouncy Caster provider for encryption
+        Security.insertProviderAt(BouncyCastleProvider(),1)
 
         // Check permissions
         Dexter.withActivity(this)
@@ -44,6 +48,8 @@ class MainActivity : AppCompatActivity() {
                             token: PermissionToken?
                     ) {}
                 }).check()
+
+
     }
 
 

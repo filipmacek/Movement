@@ -15,6 +15,7 @@ import com.google.android.gms.location.*
 import java.util.concurrent.TimeUnit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.filipmacek.movement.MainActivity
+import com.filipmacek.movement.MovementFragment
 import com.filipmacek.movement.R
 import com.filipmacek.movement.data.location.LocationRepository
 import org.koin.core.KoinComponent
@@ -249,14 +250,12 @@ class MovementLocationService : Service(),KoinComponent{
             .setBigContentTitle(titleText)
 
         // 3. Set up Intent/Pending intent for notification
-        val launchActivityIntent = Intent(this,MainActivity::class.java)
 
         val cancelIntent = Intent(this,MovementLocationService::class.java)
         cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION,true)
 
         val servicePendingIntent = PendingIntent.getService(this,0,cancelIntent,PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val activityPendingIntent = PendingIntent.getActivity(this,0,launchActivityIntent,0)
 
         // 4. Build and issue the notification
         val notificationCompatBuilder=NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
@@ -268,8 +267,7 @@ class MovementLocationService : Service(),KoinComponent{
             .setOngoing(true)
             .setSmallIcon(R.drawable.notification_icon)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .addAction(0,"Launch activity",activityPendingIntent)
-            .addAction(1,"Stop receiving location",servicePendingIntent)
+            .addAction(1,"Stop",servicePendingIntent)
             .build()
     }
 
@@ -278,7 +276,7 @@ class MovementLocationService : Service(),KoinComponent{
         if(location== null){
             return "No current location"
         }else{
-          location_string=location.latitude.toString()+","+location.longitude.toString()+",alt="+location.altitude.toString()
+          location_string=location.latitude.toString()+","+location.longitude.toString()
         }
         return location_string
 
@@ -299,7 +297,7 @@ class MovementLocationService : Service(),KoinComponent{
 
         internal const val EXTRA_LOCATION = "$PACKAGE_NAME.extra.LOCATION"
 
-        private const val EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION = "$PACKAGE_NAME.extra.CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION"
+        const val EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION = "$PACKAGE_NAME.extra.CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION"
 
         private const val NOTIFICATION_ID = 1234
 

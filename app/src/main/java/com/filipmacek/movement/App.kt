@@ -7,6 +7,7 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.filipmacek.movement.api.UserApi
 import com.filipmacek.movement.blockchain.SmartContract
+import com.filipmacek.movement.blockchain.SmartContractAgent
 import com.filipmacek.movement.data.AppDatabase
 import com.filipmacek.movement.data.location.CoordinatesDao
 import com.filipmacek.movement.data.location.LocationRepository
@@ -30,6 +31,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.koin.dsl.module
+import org.web3j.protocol.Web3j
+import org.web3j.protocol.infura.InfuraHttpService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -49,7 +52,7 @@ class App: Application() {
         viewModel { NodeViewModel(get()) }
         viewModel { MainActivityViewModel() }
         viewModel { AccountViewModel() }
-        viewModel {MovementViewModel(get(),get(),get()) }
+        viewModel {MovementViewModel(get(),get(),get(),get(),get()) }
     }
 
 
@@ -142,10 +145,19 @@ class App: Application() {
     }
 
     val smartContractModule = module {
-        fun provideSmartContract():SmartContract {
-            return SmartContract()
+        fun provideWeb3():Web3j {
+            return Web3j.build(InfuraHttpService(BuildConfig.INFURA_NODE_URL))
         }
-        single {provideSmartContract()}
+
+        fun provideSmartContract(web3j: Web3j):SmartContract {
+            return SmartContract(web3j)
+        }
+        fun provideSmartContractAgent(web3j: Web3j):SmartContractAgent{
+            return SmartContractAgent(web3j)
+        }
+        single {provideSmartContract(get())}
+        single {provideSmartContractAgent(get())}
+        single {provideWeb3()}
     }
 
 
