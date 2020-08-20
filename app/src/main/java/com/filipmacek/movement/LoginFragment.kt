@@ -2,11 +2,13 @@ package com.filipmacek.movement
 
 import android.content.Context
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.filipmacek.movement.data.users.User
@@ -40,20 +42,6 @@ class LoginFragment: Fragment() {
         }
 
 
-//        // Check if username and password exists in internal storage
-//        // User saved his credentials
-//        if ("username.txt" in context!!.fileList() && "password.txt" in context!!.fileList()){
-//            val savedUsername = File(context?.filesDir,"username.txt").readText()
-//            val savedPassword = File(context?.filesDir,"password.txt").readText()
-//            val user: User =viewModel.checkIfValid(savedUsername)
-//
-//            if(user.password == savedPassword){
-//                Navigation.findNavController(binding.root).navigate(R.id.action_login_fragment_to_dashboard)
-//            }
-//
-//        }
-//
-
 
         binding.loginButton.setOnClickListener {
             val username= binding.usernameField.editText?.text.toString()
@@ -85,7 +73,7 @@ class LoginFragment: Fragment() {
             val user: User =viewModel.checkIfValid(savedUsername)
 
             if(user.password == savedPassword){
-                Navigation.findNavController(binding.root).navigate(R.id.action_login_fragment_to_dashboard)
+                Navigation.findNavController(binding.root).navigate(R.id.action_login_fragment_to_dashboard, bundleOf("username" to user.username))
             }
 
 

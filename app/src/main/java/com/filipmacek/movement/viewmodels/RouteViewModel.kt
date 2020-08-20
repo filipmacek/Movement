@@ -8,7 +8,7 @@ import com.filipmacek.movement.data.users.User
 import com.filipmacek.movement.data.users.UserRepository
 
 class RouteViewModel(private val routeRepository: RouteRepository): ViewModel() {
-    val routes : LiveData<List<Route>> = routeRepository.getRoutes()
+    val routes = routeRepository.getRoutes()
 
 
 

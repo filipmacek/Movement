@@ -7,6 +7,7 @@ import android.content.*
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import android.view.KeyEvent
@@ -23,6 +24,9 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.filipmacek.movement.data.location.Coordinate
 import com.filipmacek.movement.data.location.CoordinatesDao
 import com.filipmacek.movement.data.location.Timer
@@ -46,9 +50,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 import com.filipmacek.movement.R
 import com.filipmacek.movement.data.users.User
+import com.filipmacek.movement.workers.RouteFinishedWorker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import kotlinx.coroutines.runBlocking
 
 
 fun TextView.blink(
@@ -83,8 +90,6 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
     private  var timer:Timer = Timer()
 
-    private lateinit var startDestination:Destination
-    private lateinit var endDestionation:Destination
 
     private val coordinatesDao:CoordinatesDao by inject()
 
@@ -134,16 +139,18 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
     ): View? {
         binding =MovementFragmentBinding.inflate(inflater,container,false).apply {   }
 
-        // Clear database
+        // Clear local database
         viewModel.clearDatabase()
 
+
+
         // Init route in viewModel
-        viewModel.initViewModel(arguments?.getString("routeId").toString(),arguments?.getString("username").toString())
+        runBlocking {
+            viewModel.initViewModel(arguments?.getString("routeId").toString(),arguments?.getString("username").toString())
+        }
 
         // Load static data
         route = viewModel.routeById(arguments?.getString("routeId").toString())
-        startDestination = getDestinationFromString(route.startLocation)
-        endDestionation = getDestinationFromString(route.endLocation)
         loadUi()
 
         // Subscribe UI ( dynamic data loading )
@@ -151,6 +158,15 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
         // Init receiver
         locationBroadcastReceiver = LocationBroadcastReceiver()
+
+        // Bild RouteFinishedWorker
+        // Send info to smart contract about user action --- 1
+        val worker = OneTimeWorkRequestBuilder<RouteFinishedWorker>()
+                .setInputData(workDataOf("username" to viewModel.user?.username,
+                        "routeId" to viewModel.route?.routeId,
+                        "nodeId" to viewModel.nodes!![0].nodeId,"userAction" to "1","dataPoints" to "0")).build()
+
+
 
         // Set event if user press BACK button
         // Which means he is canceling route and we have to report in to smart contract
@@ -165,7 +181,30 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                     cancelLocationIntent.putExtra(MovementLocationService.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION,true)
                     val serviceCancelPendingIntent = PendingIntent.getService(context,0,cancelLocationIntent,PendingIntent.FLAG_UPDATE_CURRENT)
                     serviceCancelPendingIntent.send()
-                    binding.root.findNavController().navigateUp()
+
+
+                    WorkManager.getInstance(this!!.context!!).enqueue(listOf(worker))
+
+
+
+                    val view = layoutInflater.inflate(R.layout.route_end_info,null)
+                    view.findViewById<ImageView>(R.id.routeFinishImage).setImageResource(R.drawable.route_rejected)
+                    val dialog =MaterialAlertDialogBuilder(context)
+                            .setView(view)
+                            .show()
+                    val timer =object: CountDownTimer(3000,1000){
+                        override fun onFinish(){
+                            onDestroy()
+                            dialog.dismiss()
+                            binding.root.findNavController().navigateUp()
+
+                        }
+
+                        override fun onTick(p0: Long) {
+
+                        }
+                    }
+                    timer.start()
 
                 }.setPositiveButton("Stay"){dialog,which ->
                     binding.root.requestFocus()
@@ -333,6 +372,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                 binding.dataStatus.setTextColor(Color.parseColor("#AA0D6EB8"))
             }
         }.addTo(compositeDisposable)
+
         //End location status
         viewModel.endLocationStatus.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe { status ->
             if(status && viewModel.startLocationStatus.value!!) {
@@ -341,6 +381,36 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                 binding.dataStatus.text = "Completed"
                 binding.dataStatus.setTextColor(Color.parseColor("#AA088C15"))
                 timer.dispose()
+
+                // ============= Route finished  ==============
+                // Send info to smart contract about user action --- 2
+                val worker = OneTimeWorkRequestBuilder<RouteFinishedWorker>()
+                        .setInputData(workDataOf("username" to viewModel.user?.username,
+                                "routeId" to viewModel.route?.routeId,
+                                "nodes" to viewModel.nodes!![0].nodeId,"userAction" to "2","dataPoints" to viewModel.nodeStatusData[0].value.toString())).build()
+
+                WorkManager.getInstance(this!!.context!!).enqueue(listOf(worker))
+
+
+                val dialog =MaterialAlertDialogBuilder(context)
+                        .setView(layoutInflater.inflate(R.layout.route_end_info,null))
+                        .show()
+                val timer =object: CountDownTimer(3000,1000){
+                    override fun onFinish(){
+                        onDestroy()
+                        dialog.dismiss()
+                        binding.root.findNavController().navigateUp()
+
+                    }
+
+                    override fun onTick(p0: Long) {
+
+                    }
+                }
+                timer.start()
+
+
+
 
             }
         }.addTo(compositeDisposable)
@@ -377,11 +447,6 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                             dataStatusPointTextViews.mapIndexed { index, textView ->
                                 textView.text = viewModel.nodeStatusData[index].value.toString()+"/"+coordinate.index.toString()
                             }
-
-                            // After first location received Smart Contract agent will notify smart contract
-                            // on blockchain that route started and everything is fine with location sensor
-//                            viewModel.startRoute()
-
 
                         },
                         {error -> Log.i(TAG,"Error "+error) }).addTo(compositeDisposable)

@@ -1,11 +1,11 @@
 package com.filipmacek.movement
 
 import android.app.Application
+import android.location.Geocoder
 import androidx.room.Room
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.filipmacek.movement.api.UserApi
 import com.filipmacek.movement.blockchain.SmartContract
 import com.filipmacek.movement.blockchain.SmartContractAgent
 import com.filipmacek.movement.data.AppDatabase
@@ -35,6 +35,7 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.infura.InfuraHttpService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 class App: Application() {
 
@@ -57,13 +58,7 @@ class App: Application() {
 
 
 
-    val apiModule = module {
-        fun providerUserApi(retrofit: Retrofit):UserApi {
-            return retrofit.create(UserApi::class.java)
-        }
-        single { providerUserApi(get()) }
 
-    }
 
     val netModule = module {
         fun provideCache(application: Application):Cache {
@@ -165,6 +160,8 @@ class App: Application() {
 
 
 
+
+
     override fun onCreate() {
         super.onCreate()
         app=this
@@ -172,7 +169,7 @@ class App: Application() {
         startKoin {
             androidContext(this@App)
             androidLogger(Level.DEBUG)
-            modules(listOf(viewModelModule,repositoryModule,netModule,apiModule,databaseModule,smartContractModule))
+            modules(listOf(viewModelModule,repositoryModule,netModule,databaseModule,smartContractModule))
         }
 
 

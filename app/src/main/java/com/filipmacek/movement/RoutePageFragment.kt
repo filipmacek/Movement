@@ -1,6 +1,7 @@
 package com.filipmacek.movement
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,14 @@ import com.filipmacek.movement.adapters.UserListAdapter
 import com.filipmacek.movement.data.users.User
 import com.filipmacek.movement.databinding.RoutePageFragmentBinding
 import com.filipmacek.movement.viewmodels.RouteViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 
 class RoutePageFragment(private val username:String) :Fragment(){
+    private val compositeDisposable:CompositeDisposable = CompositeDisposable()
 
     private lateinit var binding: RoutePageFragmentBinding
 
@@ -26,14 +32,17 @@ class RoutePageFragment(private val username:String) :Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         binding = RoutePageFragmentBinding.inflate(inflater,container,false)
+        binding.routeList.layoutManager = LinearLayoutManager(context)
 
+        viewModel.routes.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe({routes->
+                    val adapter =RouteListAdapter(routes,username)
+                    binding.routeList.adapter = adapter
 
-        viewModel.routes.observe(viewLifecycleOwner, Observer { routes ->
+                },{error ->
+                    Log.e(TAG,error.toString())
 
-            val adapter = RouteListAdapter(routes,username)
-            binding.routeList.adapter = adapter
-            binding.routeList.layoutManager = LinearLayoutManager(context)
-        })
+                }).addTo(compositeDisposable)
 
 
 
@@ -41,5 +50,14 @@ class RoutePageFragment(private val username:String) :Fragment(){
         return binding.root
 
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
+    }
+
+    companion object{
+        const val TAG="RoutePageFragment"
     }
 }

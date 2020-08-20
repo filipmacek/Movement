@@ -45,6 +45,10 @@ class NodeListAdapter(private var nodes: List<Node>):ListAdapter<Node,NodeListAd
         holder.nodeId.text = nodes[position].nodeId
         holder.nodeName.text = nodes[position].nodeName
         holder.ip.text = nodes[position].ip
+        holder.endpoint.text = nodes[position].dataEndpoint
+        holder.routesChecked.text = nodes[position].routesChecked.toString()
+        holder.oracleAddress.text = nodes[position].oracleContractAddress
+
 
         Observable.interval(3000L,TimeUnit.MILLISECONDS)
             .timeInterval()
@@ -84,6 +88,10 @@ class NodeListAdapter(private var nodes: List<Node>):ListAdapter<Node,NodeListAd
         val nodeId:TextView = itemView.findViewById(R.id.nodeId)
         val nodeName:TextView = itemView.findViewById(R.id.nodeName)
         val ip:TextView = itemView.findViewById(R.id.nodeIp)
+        val endpoint:TextView = itemView.findViewById(R.id.nodeEndpoint)
+        val routesChecked:TextView = itemView.findViewById(R.id.nodeRoutesChecked)
+        val oracleAddress:TextView = itemView.findViewById(R.id.nodeOracleAddress)
+
         val nodeStatus:ImageView = itemView.findViewById(R.id.nodeStatus)
         val nodeStatusText :TextView = itemView.findViewById(R.id.nodeStatusText)
     }

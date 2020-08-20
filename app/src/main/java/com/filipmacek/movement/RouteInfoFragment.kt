@@ -1,5 +1,6 @@
 package com.filipmacek.movement
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,8 +36,11 @@ class RouteInfoFragment :Fragment(),OnMapReadyCallback{
         return rootView
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap!!
+        map.isMyLocationEnabled = true
+
         val startLocation = arguments?.getString("startLocation")
         val endLocation= arguments?.getString("endLocation")
 

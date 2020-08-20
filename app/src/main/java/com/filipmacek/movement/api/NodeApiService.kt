@@ -2,6 +2,7 @@ package com.filipmacek.movement.api
 
 import com.filipmacek.movement.data.location.Coordinate
 import com.google.gson.GsonBuilder
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import retrofit2.Call
@@ -24,7 +25,10 @@ interface NodeApiService {
     fun ready(@Path("data_endpoint") endpoint:String):Call<Ready>
 
     @POST("{data_endpoint}/route/{routeId}")
-    fun postData(@Path("data_endpoint") endpoint: String,@Path("routeId") routeId:String,@Body coordinate: Coordinate):Flowable<Coordinate>
+    fun postData(@Path("data_endpoint") endpoint: String, @Path("routeId") routeId:String,@Body coordinate: Coordinate):Flowable<Coordinate>
+
+    @POST("{data_endpoint}/route/{routeId}/clear")
+    fun clearAllData(@Path("data_endpoint") endpoint: String, @Path("routeId") routeId: String):Completable
 
     companion object {
 

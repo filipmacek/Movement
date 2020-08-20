@@ -29,5 +29,10 @@ class NodeRepository(private val nodeDao: NodeDao) {
                     nodeServiceMap[nodeIp]=it
                 }).ready(dataEndpoint)
 
-    }
+    fun clearRouteData(nodeIp: String,dataEndpoint: String,routeId: String) = (nodeServiceMap[nodeIp] ?: NodeApiService.create(nodeIp)
+            .also {
+                nodeServiceMap[nodeIp]=it
+            }).clearAllData(dataEndpoint,routeId)
+
+}
 

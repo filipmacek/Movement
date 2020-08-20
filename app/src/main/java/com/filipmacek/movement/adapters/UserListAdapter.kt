@@ -50,7 +50,7 @@ class UserListAdapter (private var users: List<User>):ListAdapter<User,UserListA
                     val username=users[position].username
                     //Check if password is valid
                     val user:User = userRepository.getUserByUsername(username)
-                    val bundle_username = bundleOf("username" to user.username)
+                    val bundle_username = bundleOf("username" to username)
                     if(user.password == password) {
                         Navigation.findNavController(holder.itemView).navigate(R.id.action_user_list_to_dashboard,bundle_username)
                     }else {

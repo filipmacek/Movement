@@ -13,15 +13,15 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import org.koin.android.ext.android.inject
 import com.filipmacek.movement.BuildConfig
+import com.filipmacek.movement.data.location.LocationRepository
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.security.Security
 import org.spongycastle.jce.provider.BouncyCastleProvider
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
-    private val viewModel:MainActivityViewModel by inject()
 
-    val x = Coordinate("12:12:04 1.1.2019",45.34232,43.2321,1)
-    val y = Coordinate("12:14:08 1.1.2019",45.34232,43.2321,1)
+
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity() {
                             token: PermissionToken?
                     ) {}
                 }).check()
+
+
 
 
     }

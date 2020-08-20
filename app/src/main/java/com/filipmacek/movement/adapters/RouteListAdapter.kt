@@ -1,7 +1,7 @@
 package com.filipmacek.movement.adapters
 
 import android.content.Context
-import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,19 +13,19 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.filipmacek.movement.MovementFragment
 import com.filipmacek.movement.R
 import com.filipmacek.movement.data.routes.Route
-import com.filipmacek.movement.data.users.User
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 
-class RouteListAdapter (private var routes: List<Route>,private val user: String): ListAdapter<Route, RouteListAdapter.ViewHolder>(RouteItemDiffCallback()) {
+class RouteListAdapter (private var routes: List<Route>,private val username: String): ListAdapter<Route, RouteListAdapter.ViewHolder>(RouteItemDiffCallback()),KoinComponent {
+
 
     // Context global var
     private lateinit var context: Context
 
-//    private val userRepository: RouteRepository by inject()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view= LayoutInflater.from(parent.context).inflate(R.layout.route_row,parent,false)
@@ -35,9 +35,18 @@ class RouteListAdapter (private var routes: List<Route>,private val user: String
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.routeId.text=routes[position].routeId
-        holder.maker.text=makeProperString(routes[position].maker)
         holder.startLocation.text=routes[position].startLocation
         holder.endLocation.text=routes[position].endLocation
+
+        if(routes[position].isStarted == false && routes[position].isFinished == false){
+            // Route is neither started nor finished then its Available
+            holder.routeStatus.text = "Available"
+            holder.routeStatus.setTextColor(Color.GREEN)
+        }
+        if(routes[position].isStarted == false && routes[position].isFinished == true) {
+
+        }
+
 
 
         val dialog=MaterialAlertDialogBuilder(context)
@@ -48,7 +57,7 @@ class RouteListAdapter (private var routes: List<Route>,private val user: String
             }
             .setPositiveButton("Yes") { dialog,which ->
                 Log.i("Route starts","Route is starting")
-                val bundle_start = bundleOf("routeId" to routes[position].routeId,"username" to user)
+                val bundle_start = bundleOf("routeId" to routes[position].routeId,"username" to username)
                 Navigation.findNavController(holder.itemView).navigate(R.id.action_dashboard_to_movement_page,bundle_start)
             }
 
@@ -63,6 +72,7 @@ class RouteListAdapter (private var routes: List<Route>,private val user: String
 
 
 
+
     }
 
     private fun makeProperString(temp:String):String{
@@ -73,11 +83,21 @@ class RouteListAdapter (private var routes: List<Route>,private val user: String
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val routeId: TextView = itemView.findViewById(R.id.routeId)
-        val maker: TextView = itemView.findViewById(R.id.maker)
         val startLocation: TextView = itemView.findViewById(R.id.startLocation)
         val endLocation: TextView = itemView.findViewById(R.id.endLocation)
+        val routeStatus:TextView = itemView.findViewById(R.id.routeStatus)
         val acceptButton: Button = itemView.findViewById(R.id.accept_button)
         val infoButton: Button = itemView.findViewById(R.id.info_button)
+    }
+
+
+    private fun getLoc(s:String,t:Int):Double {
+        if(t==0)  {
+            return (s.substring(0,s.indexOf(",")).toDouble())
+        } else {
+            return (s.substring(s.indexOf(",")+1).toDouble())
+        }
+
     }
 
 }

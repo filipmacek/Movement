@@ -24,7 +24,36 @@ data class TimeStamp(val s:String){
 
     // It will give time change in seconds
     fun subSeconds(tmp:TimeStamp):Int{
-        return abs(tmp.hours!! - this!!.hours!!)*60*60+abs(tmp.minutes!! - this!!.minutes!!)*60+abs(tmp.seconds!!- this!!.seconds!!)
+        var secondsDiff = 0
+        var minutesMinus = 0
+
+        var minutesDiff = 0
+        var hoursMinus = 0
+
+        var hoursDiff=0
+
+        // Seconds
+        if(this.seconds!! < tmp.seconds!!){
+            secondsDiff = (60 + this.seconds!! - tmp.seconds!!)
+            minutesMinus=1
+        }else{
+            secondsDiff = this.seconds!! - tmp.seconds!!
+
+        }
+
+        // Minutes
+        if(this.minutes!! < tmp.minutes!!){
+            minutesDiff = (60 + this.minutes!! - tmp.minutes!!)-minutesMinus
+            hoursMinus=1
+        }else {
+
+            minutesDiff = ( this.minutes!! - tmp.minutes!!)-minutesMinus
+        }
+
+        hoursDiff = this.hours!! - tmp.hours!!-hoursMinus
+        return hoursDiff*60*60+
+                minutesDiff*60+
+                secondsDiff
     }
 
     // It will give time change in hours
@@ -36,7 +65,7 @@ data class TimeStamp(val s:String){
 
 @Entity(tableName = "currentCoordinates")
 data class Coordinate(
-        @PrimaryKey val timeStamp:String,
+        @PrimaryKey val timestamp:String,
         val latitude:Double,
         val longitude:Double,
         val index:Int
@@ -55,8 +84,8 @@ data class Coordinate(
 
 
     fun getVelocityMs(tmp:Coordinate):Double{
-        val t1=TimeStamp(tmp.timeStamp)
-        val t2=TimeStamp(this.timeStamp)
+        val t1=TimeStamp(tmp.timestamp)
+        val t2=TimeStamp(this.timestamp)
 
         val delta_time= t2.subSeconds(t1)
         val delta_space:Double=tmp.getDistance(this)
@@ -70,8 +99,8 @@ data class Coordinate(
 
     }
     fun getVelocityKmh(tmp:Coordinate):Double{
-        val t1=TimeStamp(tmp.timeStamp)
-        val t2=TimeStamp(this.timeStamp)
+        val t1=TimeStamp(tmp.timestamp)
+        val t2=TimeStamp(this.timestamp)
 
         val delta_time= t2.subHours(t1)
         val delta_space:Double=tmp.getDistance(this)/1000

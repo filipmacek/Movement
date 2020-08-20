@@ -9,5 +9,6 @@ data class Node (
     val nodeName:String,
     val ip:String,
     val dataEndpoint:String,
-    val oracleContractAddress:String
+    val oracleContractAddress:String,
+    val routesChecked:Int
 )
