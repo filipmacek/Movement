@@ -61,10 +61,12 @@ class NodeListAdapter(private var nodes: List<Node>):ListAdapter<Node,NodeListAd
                             holder.nodeStatus.setBackgroundColor(Color.GREEN)
                             holder.nodeStatusText.text = "Connected"
                             holder.nodeStatusText.setTextColor(Color.BLACK)
+                            nodeRepository.nodeStatus[position].onNext(true)
                         }else {
                             holder.nodeStatus.setBackgroundColor(Color.RED)
                             holder.nodeStatusText.text = "Not Connected"
                             holder.nodeStatusText.setTextColor(Color.RED)
+                            nodeRepository.nodeStatus[position].onNext(false)
                         }
                     }
 

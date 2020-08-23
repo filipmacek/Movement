@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.filipmacek.movement.adapters.ACCOUNT_PAGE
 import com.filipmacek.movement.adapters.DashboardPagerAdapter
 import com.filipmacek.movement.adapters.NODES_PAGE
@@ -29,6 +31,8 @@ class DashboardFragment: Fragment(){
 
         val username = arguments?.getString("username").toString()
 
+
+
         viewPager.adapter = DashboardPagerAdapter(this,username)
 
         TabLayoutMediator(tabLayout,viewPager) { tab,position ->
@@ -38,6 +42,7 @@ class DashboardFragment: Fragment(){
         }.attach()
 
 //        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+
 
 
         return binding.root;

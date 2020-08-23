@@ -9,6 +9,7 @@ import com.filipmacek.movement.data.users.User
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.datatypes.Bool
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Uint
 import org.web3j.abi.datatypes.Utf8String
@@ -43,7 +44,7 @@ class SmartContractAgent (web3j: Web3j):KoinComponent{
 
 
 
-    fun routeStarted(user: User, route: Route, nodeList:List<Node>){
+    fun routeStarted(user: User, route: Route, nodeList:List<Node>,node1Status:Boolean,node2Status:Boolean){
         Log.i(TAG,"Smart contract agent reporting that route started")
 
         // Function
@@ -51,7 +52,9 @@ class SmartContractAgent (web3j: Web3j):KoinComponent{
                 "startRouteEvent",
                 mutableListOf(
                         Uint(BigInteger.valueOf(route.routeId.toLong())),
-                        Utf8String(user.username),Uint(BigInteger.valueOf(nodeList[0].nodeId.toLong()))),
+                        Utf8String(user.username),
+                        Bool(node1Status),
+                        Bool(node2Status)),
                 mutableListOf()
         )
 
@@ -78,8 +81,8 @@ class SmartContractAgent (web3j: Web3j):KoinComponent{
     }
 
 
-    fun routeFinished(username: String?, routeId: String?, nodeId: String?,
-                      userAction:Int?, dataPoints:Int?)
+    fun routeFinished(username: String?, routeId: String?,
+                      userAction:Int?, dataPoints:Int?,node1DataPoints: Int?,node2DataPoints:Int?)
     {
 
         Log.i(TAG,"Smart contract agent reporting that route finished")
@@ -96,8 +99,8 @@ class SmartContractAgent (web3j: Web3j):KoinComponent{
                         Utf8String(username),
                         Uint(BigInteger.valueOf(action.toLong())),
                         Uint(BigInteger.valueOf(dataPoints!!.toLong())),
-                        Uint(BigInteger.valueOf(nodeId!!.toLong()))
-
+                        Uint(BigInteger.valueOf(node1DataPoints!!.toLong())),
+                        Uint(BigInteger.valueOf(node2DataPoints!!.toLong()))
                 ),
                 mutableListOf()
         )

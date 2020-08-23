@@ -131,7 +131,7 @@ class MovementViewModel(private val routeRepository: RouteRepository,
             .subscribe({
                 // After first location received Smart Contract agent will notify smart contract
                 // on blockchain that route started and everything is fine with location sensor
-                //smartContractAgent.routeStarted(this.user!!, this.route!!,this.nodes!!)
+                smartContractAgent.routeStarted(this.user!!, this.route!!,this.nodes!!,nodeRepository.nodeStatus[0].value!!,nodeRepository.nodeStatus[1].value!!)
             },{ error -> Log.i(TAG,"Error! SmartContract Agent could NOT start startRouteEvent on smart contract")}).addTo(compositeDisposable)
 
 

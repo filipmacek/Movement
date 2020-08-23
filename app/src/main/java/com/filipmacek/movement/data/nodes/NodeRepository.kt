@@ -9,10 +9,19 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import java.util.*
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
+import org.web3j.abi.datatypes.Bool
 import retrofit2.Call
+import kotlin.collections.ArrayList
 
 class NodeRepository(private val nodeDao: NodeDao) {
     private val nodeServiceMap: MutableMap<String,NodeApiService> = mutableMapOf()
+
+     val nodeStatus:ArrayList<BehaviorSubject<Boolean>> = arrayListOf(
+             BehaviorSubject.createDefault(false),
+             BehaviorSubject.createDefault(false)
+     )
+
 
     fun getNodes() = nodeDao.getAll()
 

@@ -1,6 +1,7 @@
 package com.filipmacek.movement.data.location
 
 import android.location.Location
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.sql.Time
@@ -58,7 +59,7 @@ data class TimeStamp(val s:String){
 
     // It will give time change in hours
     fun subHours(tmp:TimeStamp):Double{
-        val seconds = tmp.subSeconds(this)
+        val seconds = this.subSeconds(tmp)
         return (seconds.toDouble()/3600)
     }
 }
@@ -86,10 +87,8 @@ data class Coordinate(
     fun getVelocityMs(tmp:Coordinate):Double{
         val t1=TimeStamp(tmp.timestamp)
         val t2=TimeStamp(this.timestamp)
-
         val delta_time= t2.subSeconds(t1)
         val delta_space:Double=tmp.getDistance(this)
-
 
         if(delta_time==0) {
             return 0.0

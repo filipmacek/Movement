@@ -19,11 +19,11 @@ import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.Navigation
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -84,6 +84,8 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
 
     private lateinit var route:Route
 
+    private lateinit var  navControler: NavController
+
     private var dataStatusPointTextViews:ArrayList<TextView> = arrayListOf()
 
     private var nodeStatusConnectionImageViews:ArrayList<ImageView> = arrayListOf()
@@ -142,6 +144,9 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         // Clear local database
         viewModel.clearDatabase()
 
+        val navHostFragment = activity?.supportFragmentManager?.findFragmentById(R.id.nav_host) as NavHostFragment
+        navControler = navHostFragment.navController
+
 
 
         // Init route in viewModel
@@ -164,7 +169,9 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
         val worker = OneTimeWorkRequestBuilder<RouteFinishedWorker>()
                 .setInputData(workDataOf("username" to viewModel.user?.username,
                         "routeId" to viewModel.route?.routeId,
-                        "nodeId" to viewModel.nodes!![0].nodeId,"userAction" to "1","dataPoints" to "0")).build()
+                        "userAction" to "1",
+                        "dataPoints" to "0",
+                        "node1DataPoints" to "0","node2DataPoints" to "0")).build()
 
 
 
@@ -196,7 +203,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                         override fun onFinish(){
                             onDestroy()
                             dialog.dismiss()
-                            binding.root.findNavController().navigateUp()
+                            navControler.navigateUp()
 
                         }
 
@@ -387,7 +394,11 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                 val worker = OneTimeWorkRequestBuilder<RouteFinishedWorker>()
                         .setInputData(workDataOf("username" to viewModel.user?.username,
                                 "routeId" to viewModel.route?.routeId,
-                                "nodes" to viewModel.nodes!![0].nodeId,"userAction" to "2","dataPoints" to viewModel.nodeStatusData[0].value.toString())).build()
+                                "userAction" to "2",
+                                "dataPoints" to viewModel.pointLast.value?.index.toString(),
+                                "node1DataPoints" to viewModel.nodeStatusData[0].value.toString(),
+                                "node2DataPoints" to viewModel.nodeStatusData[1].value.toString()
+                                )).build()
 
                 WorkManager.getInstance(this!!.context!!).enqueue(listOf(worker))
 
@@ -399,7 +410,7 @@ class MovementFragment :Fragment(),OnMapReadyCallback{
                     override fun onFinish(){
                         onDestroy()
                         dialog.dismiss()
-                        binding.root.findNavController().navigateUp()
+                        navControler.navigateUp()
 
                     }
 

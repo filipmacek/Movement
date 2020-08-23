@@ -51,11 +51,12 @@ class SmartContract(web3j: Web3j){
         val routesCount= this.contract?.routesCount?.sendAsync()?.get()?.toInt()
 
         for(i in 0 until routesCount!!) {
-            val (routeId,maker,taker,startLocation,endLocation,isStarted,isFinished) =
+            val (routeId,maker,taker,startLocation,endLocation,isStarted
+                    ,isFinished,isCompleted,description) =
                 checkNotNull(this.contract?.routes(BigInteger(i.toString()))?.sendAsync()?.get()
             )
             routeList.add(i,
-                Route(routeId.toString(),maker,taker,startLocation,endLocation,isStarted,isFinished)
+                Route(routeId.toString(),maker,taker,startLocation,endLocation,isStarted,isFinished,isCompleted,description)
             )
 
         }

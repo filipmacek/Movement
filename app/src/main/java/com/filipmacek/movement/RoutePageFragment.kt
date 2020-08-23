@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.filipmacek.movement.adapters.RouteListAdapter
 import com.filipmacek.movement.adapters.UserListAdapter
@@ -34,9 +35,14 @@ class RoutePageFragment(private val username:String) :Fragment(){
         binding = RoutePageFragmentBinding.inflate(inflater,container,false)
         binding.routeList.layoutManager = LinearLayoutManager(context)
 
+        // Make fragment controller a variable
+        val navhostFragment = activity?.supportFragmentManager?.findFragmentById(R.id.nav_host) as NavHostFragment
+        val navController = navhostFragment.navController
+
+
         viewModel.routes.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe({routes->
-                    val adapter =RouteListAdapter(routes,username)
+                    val adapter =RouteListAdapter(routes,username,navController)
                     binding.routeList.adapter = adapter
 
                 },{error ->

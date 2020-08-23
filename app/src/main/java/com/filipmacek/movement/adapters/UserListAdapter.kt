@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 
@@ -27,7 +28,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 
-class UserListAdapter (private var users: List<User>):ListAdapter<User,UserListAdapter.ViewHolder>(UserItemDiffCallback()),KoinComponent{
+class UserListAdapter (private var users: List<User>,private val navController: NavController):ListAdapter<User,UserListAdapter.ViewHolder>(UserItemDiffCallback()),KoinComponent{
     // Context global var
     private lateinit var context:Context
 
@@ -52,7 +53,7 @@ class UserListAdapter (private var users: List<User>):ListAdapter<User,UserListA
                     val user:User = userRepository.getUserByUsername(username)
                     val bundle_username = bundleOf("username" to username)
                     if(user.password == password) {
-                        Navigation.findNavController(holder.itemView).navigate(R.id.action_user_list_to_dashboard,bundle_username)
+                        navController.navigate(R.id.action_user_list_to_dashboard,bundle_username)
                     }else {
                         val toast = Toast.makeText(context,"Incorrect password",Toast.LENGTH_SHORT)
                         val toastView= toast.view

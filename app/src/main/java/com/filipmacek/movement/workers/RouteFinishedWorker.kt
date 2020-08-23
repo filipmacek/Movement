@@ -23,9 +23,10 @@ class RouteFinishedWorker (
             smartContractAgent.routeFinished(
                     inputData.getString("username"),
                     inputData.getString("routeId"),
-                    inputData.getString("nodeId"),
                     inputData.getString("userAction")?.toInt(),
-                    inputData.getString("dataPoints")?.toInt()
+                    inputData.getString("dataPoints")?.toInt(),
+                    inputData.getString("node1DataPoints")?.toInt(),
+                    inputData.getString("node2DataPoints")?.toInt()
             )
 
             Result.success()

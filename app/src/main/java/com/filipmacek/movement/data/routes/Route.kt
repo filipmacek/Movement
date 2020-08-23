@@ -11,5 +11,7 @@ data class Route (
     val startLocation:String,
     val endLocation:String,
     val isStarted: Boolean,
-    val isFinished:Boolean
+    val isFinished:Boolean,
+    val isCompleted:Boolean,
+    val description:String
 )
