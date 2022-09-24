@@ -1,6 +1,6 @@
 # Mobile Android app for master-thesis
 <p align="center">
- <img src="pictures/mobile_app.png"/>
+ <img src="pictures-mobile/mobile_app.png"/>
 </p>
 
 ### Description
@@ -43,7 +43,7 @@ The goal was to simulate decentralized oracle network with these two nodes.
 
 
 <p align='center'>
-<img align='center' src="pictures/mobile_app_dashboard.png"/>
+<img align='center' src="pictures-mobile/mobile_app_dashboard.png"/>
 </p>
 
 <p align='center'>
@@ -98,7 +98,7 @@ radius od 20 meters which is condition we set up for acknowledging that user did
 
 
 <p align='center'>
-<img align='center' src="pictures/mobile_app_route.png"/>
+<img align='center' src="pictures-mobile/mobile_app_finish.png"/>
 </p>
 
 <p align='center'>
