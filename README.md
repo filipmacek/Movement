@@ -120,7 +120,7 @@ Here you could see GIFs from each state change when user started executing route
 ### 1. At start
 When user starts executing route, program first check if user visited start location.
 <p align='center'>
-  <img src="video/at_start.gif" width="40%" height="49%"/>
+  <img src="video/at_start.gif" width="55%" height="55%"/>
 </p>
 
 
@@ -129,7 +129,7 @@ Here you can see in this fast forwarded gif, how user is approaching the end loc
 As user walk location changes are recorded on Android app, which sends these data points to `DataAdapter` IP address 
 of Chainlink node.
 <p align='center'>
-  <img src="video/during.gif" width="40%" height="50%"/>
+  <img src="video/during.gif" width="55%" height="55%"/>
 </p>
 
 
@@ -138,5 +138,5 @@ At the last phase of route execution, we are waiting for user to visit the end l
 After he is in radius of 20m from end data point, app exits from route execution dashboard and notifies user, \
 In the background our `Agent` entity on app notifies smart contract on blockchain that route is finished.
 <p align='center'>
-  <img src="video/at_the_end.gif" width="40%" height="50%"/>
+  <img src="video/at_the_end.gif" width="55%" height="55%"/>
 </p>
