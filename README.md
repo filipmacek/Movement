@@ -8,8 +8,8 @@
 This project is part of my master thesis, which you can check [here](https://github.com/filipmacek/master-thesis).
 
 Mobile Android app is a digital twin for users within our ecosystem `Movement`.
-It helps the user execute routes and generates location data as the user moves.
-After the user registers on the web app, smart contract writes data about user registration on a blockchain.
+It helps users execute routes and generates location data from user movements.
+After the user registers on the web app, smart contract writes data about his registration on a blockchain.
 Then the user can access the mobile app with the username and password specified in the registration form.
 Also, to get location data, the user needs to give permission to the Android app.
 At startup, the application connects with  Infura RPC endpoint to Ethereum testnet Kovan and
@@ -18,7 +18,7 @@ After the user enters his username and password, the app checks if data matches 
 If the username and two times hashed password match, the app confirms identity of the user and permits him to
 enter into a new Android fragment that will act as a dashboard.
 
-On dashboard view are three different tabs.
+Dashboard view has three different tabs.
 
 #### Routes
 List of all the available routes with start and end location points, status and descriptions.
@@ -34,9 +34,9 @@ It shows personal data about users and their routes.
 
 ***
 
-Here in the first picture, there are three routes, with all metadata and status. Some of them are available to users to complete, but
-some of them are already completed.
-In the second picture, we could see two nodes or Linux servers that act as `DataAdapter` for our Chainlink nodes.
+Here in the first picture, there are three routes, with all metadata information and status of routes. 
+Some of them are available to users, but some of them are already completed.
+In the second picture, we see two nodes or Linux servers that act as `DataAdapter` for our Chainlink nodes.
 Each node has an IP address, endpoint, and oracle address of the corresponding Chainlink oracle contract.
 The goal was to simulate a decentralized oracle network with these two nodes.
 
@@ -94,7 +94,7 @@ This dashboard is the primary tool for users running routes. It has all the rele
 
 #### Map
 Google Maps, which shows start and end location data points with pinpoint. Also, around each location point, there is a circle with
-the radius of 21 meters is a condition we set up to acknowledge that the user did visit this point.
+the radius of 20 meter. We set up this condition to acknowledge that the user did visit this point.
 
 
 <p align='center'>
@@ -117,14 +117,14 @@ The smart contract will then start to parse and process location data with the h
 ## Live
 Here you could see GIFs from each state change when user started executing route.
 
-### 2. At start
+### 1. At start
 When the user starts executing the route, the program first checks if the user has visited the start location.
 <p align='center'>
   <img src="video/at_start.gif" width="56%" height="55%"/>
 </p>
 
 
-### 3. During the execution of route
+### 2. During the execution of route
 Here you can see how the user is approaching the end location in this fast-forwarded gif.
 As the user walks, location changes are recorded on the Android app, which sends these data points to `DataAdapter` IP address
 of the Chainlink node.
@@ -133,7 +133,7 @@ of the Chainlink node.
 </p>
 
 
-### 4. At the end
+### 3. At the end
 In the last phase of route execution, we wait for the user to visit the end location.
 After he is in a radius of 20m from the end data point, the app exits from route execution dashboard and notifies user, \
 In the background, our `Agent` entity notifies the smart contract on the blockchain that the route is finished.
